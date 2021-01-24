@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>wnmp</id>
+    <version>1.0.0</version>
+    <authors>jianghong</authors>
+    <owners>jianghong</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>logo.png</icon>
+    <description>wnmp环境集成，简单方便。</description>
+    <releaseNotes>wnmp环境集成，简单方便。</releaseNotes>
+    <dependencies>
+      <group targetFramework=".NETCoreApp3.1" />
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework=".NETCoreApp3.1">
+        <frameworkReference name="Microsoft.WindowsDesktop.App" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="D:\www\study\csharp\wnmp\bin\Debug\netcoreapp3.1\wnmp.runtimeconfig.json" target="lib\netcoreapp3.1\wnmp.runtimeconfig.json" />
+    <file src="D:\www\study\csharp\wnmp\bin\Debug\netcoreapp3.1\wnmp.dll" target="lib\netcoreapp3.1\wnmp.dll" />
+    <file src="D:\www\study\csharp\wnmp\logo.png" target="logo.png" />
+  </files>
+</package>
