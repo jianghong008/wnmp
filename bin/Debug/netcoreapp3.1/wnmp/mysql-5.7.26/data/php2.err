@@ -1,0 +1,65 @@
+2019-05-06T05:46:12.587200Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-05-06T05:46:12.587200Z 0 [Note] --secure-file-priv is set to NULL. Operations related to importing and exporting data are disabled
+2019-05-06T05:46:12.588200Z 0 [Note] C:\Users\win7\Downloads\mysql-5.7.26-winx64\bin\mysqld.exe (mysqld 5.7.26) starting as process 4816 ...
+2019-05-06T05:46:12.599200Z 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2019-05-06T05:46:12.600200Z 0 [Note] InnoDB: Uses event mutexes
+2019-05-06T05:46:12.601200Z 0 [Note] InnoDB: _mm_lfence() and _mm_sfence() are used for memory barrier
+2019-05-06T05:46:12.602200Z 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2019-05-06T05:46:12.603200Z 0 [Note] InnoDB: Number of pools: 1
+2019-05-06T05:46:12.603200Z 0 [Note] InnoDB: Not using CPU crc32 instructions
+2019-05-06T05:46:12.611200Z 0 [Note] InnoDB: Initializing buffer pool, total size = 128M, instances = 1, chunk size = 128M
+2019-05-06T05:46:12.622200Z 0 [Note] InnoDB: Completed initialization of buffer pool
+2019-05-06T05:46:12.657200Z 0 [Note] InnoDB: Highest supported file format is Barracuda.
+2019-05-06T05:46:12.717200Z 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2019-05-06T05:46:12.718200Z 0 [Note] InnoDB: Setting file '.\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2019-05-06T05:46:12.796200Z 0 [Note] InnoDB: File '.\ibtmp1' size is now 12 MB.
+2019-05-06T05:46:12.799200Z 0 [Note] InnoDB: 96 redo rollback segment(s) found. 96 redo rollback segment(s) are active.
+2019-05-06T05:46:12.800200Z 0 [Note] InnoDB: 32 non-redo rollback segment(s) are active.
+2019-05-06T05:46:12.801200Z 0 [Note] InnoDB: Waiting for purge to start
+2019-05-06T05:46:12.851200Z 0 [Note] InnoDB: 5.7.26 started; log sequence number 2524985
+2019-05-06T05:46:12.852200Z 0 [Note] InnoDB: Loading buffer pool(s) from C:\Users\win7\Downloads\mysql-5.7.26-winx64\data\ib_buffer_pool
+2019-05-06T05:46:12.852200Z 0 [Note] Plugin 'FEDERATED' is disabled.
+2019-05-06T05:46:12.865200Z 0 [Warning] Failed to set up SSL because of the following SSL library error: SSL context is not usable without certificate and private key
+2019-05-06T05:46:12.866200Z 0 [Note] Server hostname (bind-address): '*'; port: 3306
+2019-05-06T05:46:12.867200Z 0 [Note] IPv6 is available.
+2019-05-06T05:46:12.867200Z 0 [Note]   - '::' resolves to '::';
+2019-05-06T05:46:12.868200Z 0 [Note] Server socket created on IP: '::'.
+2019-05-06T05:46:12.908200Z 0 [Note] InnoDB: Buffer pool(s) load completed at 190506 13:46:12
+2019-05-06T05:46:12.935200Z 0 [Note] Event Scheduler: Loaded 0 events
+2019-05-06T05:46:12.936200Z 0 [Note] C:\Users\win7\Downloads\mysql-5.7.26-winx64\bin\mysqld.exe: ready for connections.
+Version: '5.7.26'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2019-05-06T05:47:31.754200Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-05-06T05:47:31.754200Z 0 [Note] --secure-file-priv is set to NULL. Operations related to importing and exporting data are disabled
+2019-05-06T05:47:31.754200Z 0 [Note] C:\Users\win7\Downloads\mysql-5.7.26-winx64\bin\mysqld.exe (mysqld 5.7.26) starting as process 3264 ...
+2019-05-06T05:47:31.764200Z 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2019-05-06T05:47:31.765200Z 0 [Note] InnoDB: Uses event mutexes
+2019-05-06T05:47:31.766200Z 0 [Note] InnoDB: _mm_lfence() and _mm_sfence() are used for memory barrier
+2019-05-06T05:47:31.767200Z 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2019-05-06T05:47:31.768200Z 0 [Note] InnoDB: Number of pools: 1
+2019-05-06T05:47:31.769200Z 0 [Note] InnoDB: Not using CPU crc32 instructions
+2019-05-06T05:47:31.776200Z 0 [Note] InnoDB: Initializing buffer pool, total size = 128M, instances = 1, chunk size = 128M
+2019-05-06T05:47:31.786200Z 0 [Note] InnoDB: Completed initialization of buffer pool
+2019-05-06T05:47:31.824200Z 0 [Note] InnoDB: Highest supported file format is Barracuda.
+2019-05-06T05:47:31.827200Z 0 [Note] InnoDB: Log scan progressed past the checkpoint lsn 2525004
+2019-05-06T05:47:31.827200Z 0 [Note] InnoDB: Doing recovery: scanned up to log sequence number 2525013
+2019-05-06T05:47:31.828200Z 0 [Note] InnoDB: Database was not shutdown normally!
+2019-05-06T05:47:31.828200Z 0 [Note] InnoDB: Starting crash recovery.
+2019-05-06T05:47:32.027200Z 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2019-05-06T05:47:32.028200Z 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2019-05-06T05:47:32.029200Z 0 [Note] InnoDB: Setting file '.\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2019-05-06T05:47:32.101200Z 0 [Note] InnoDB: File '.\ibtmp1' size is now 12 MB.
+2019-05-06T05:47:32.104200Z 0 [Note] InnoDB: 96 redo rollback segment(s) found. 96 redo rollback segment(s) are active.
+2019-05-06T05:47:32.105200Z 0 [Note] InnoDB: 32 non-redo rollback segment(s) are active.
+2019-05-06T05:47:32.106200Z 0 [Note] InnoDB: Waiting for purge to start
+2019-05-06T05:47:32.157200Z 0 [Note] InnoDB: 5.7.26 started; log sequence number 2525013
+2019-05-06T05:47:32.158200Z 0 [Note] InnoDB: Loading buffer pool(s) from C:\Users\win7\Downloads\mysql-5.7.26-winx64\data\ib_buffer_pool
+2019-05-06T05:47:32.158200Z 0 [Note] Plugin 'FEDERATED' is disabled.
+2019-05-06T05:47:32.175200Z 0 [Warning] Failed to set up SSL because of the following SSL library error: SSL context is not usable without certificate and private key
+2019-05-06T05:47:32.176200Z 0 [Note] Server hostname (bind-address): '*'; port: 3306
+2019-05-06T05:47:32.178200Z 0 [Note] IPv6 is available.
+2019-05-06T05:47:32.178200Z 0 [Note]   - '::' resolves to '::';
+2019-05-06T05:47:32.179200Z 0 [Note] Server socket created on IP: '::'.
+2019-05-06T05:47:32.203200Z 0 [Note] InnoDB: Buffer pool(s) load completed at 190506 13:47:32
+2019-05-06T05:47:32.225200Z 0 [Note] Event Scheduler: Loaded 0 events
+2019-05-06T05:47:32.226200Z 0 [Note] C:\Users\win7\Downloads\mysql-5.7.26-winx64\bin\mysqld.exe: ready for connections.
+Version: '5.7.26'  socket: ''  port: 3306  MySQL Community Server (GPL)

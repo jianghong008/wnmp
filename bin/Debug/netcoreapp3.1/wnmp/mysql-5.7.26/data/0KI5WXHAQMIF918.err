@@ -1,0 +1,70 @@
+2019-06-13T01:33:09.643902Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-06-13T01:33:09.644902Z 0 [Note] --secure-file-priv is set to NULL. Operations related to importing and exporting data are disabled
+2019-06-13T01:33:09.644902Z 0 [Note] D:\phpstudy_pro\COM\..\Extensions\MySQL5.7.26\bin\mysqld.exe (mysqld 5.7.26) starting as process 11064 ...
+2019-06-13T01:33:09.658902Z 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2019-06-13T01:33:09.660902Z 0 [Note] InnoDB: Uses event mutexes
+2019-06-13T01:33:09.660902Z 0 [Note] InnoDB: _mm_lfence() and _mm_sfence() are used for memory barrier
+2019-06-13T01:33:09.661902Z 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2019-06-13T01:33:09.662902Z 0 [Note] InnoDB: Number of pools: 1
+2019-06-13T01:33:09.662902Z 0 [Note] InnoDB: Not using CPU crc32 instructions
+2019-06-13T01:33:09.665902Z 0 [Note] InnoDB: Initializing buffer pool, total size = 128M, instances = 1, chunk size = 128M
+2019-06-13T01:33:09.672902Z 0 [Note] InnoDB: Completed initialization of buffer pool
+2019-06-13T01:33:13.315902Z 0 [Note] InnoDB: Highest supported file format is Barracuda.
+2019-06-13T01:33:13.321902Z 0 [Note] InnoDB: Log scan progressed past the checkpoint lsn 2525032
+2019-06-13T01:33:13.322902Z 0 [Note] InnoDB: Doing recovery: scanned up to log sequence number 2525041
+2019-06-13T01:33:13.323902Z 0 [Note] InnoDB: Database was not shutdown normally!
+2019-06-13T01:33:13.324902Z 0 [Note] InnoDB: Starting crash recovery.
+2019-06-13T01:33:13.912902Z 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2019-06-13T01:33:13.912902Z 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2019-06-13T01:33:13.913902Z 0 [Note] InnoDB: Setting file '.\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2019-06-13T01:33:16.210902Z 0 [Note] InnoDB: File '.\ibtmp1' size is now 12 MB.
+2019-06-13T01:33:16.215902Z 0 [Note] InnoDB: 96 redo rollback segment(s) found. 96 redo rollback segment(s) are active.
+2019-06-13T01:33:16.216902Z 0 [Note] InnoDB: 32 non-redo rollback segment(s) are active.
+2019-06-13T01:33:16.221902Z 0 [Note] InnoDB: Waiting for purge to start
+2019-06-13T01:33:16.272902Z 0 [Note] InnoDB: page_cleaner: 1000ms intended loop took 6597ms. The settings might not be optimal. (flushed=0 and evicted=0, during the time.)
+2019-06-13T01:33:16.306902Z 0 [Note] InnoDB: 5.7.26 started; log sequence number 2525041
+2019-06-13T01:33:16.307902Z 0 [Note] Plugin 'FEDERATED' is disabled.
+2019-06-13T01:33:16.307902Z 0 [Note] InnoDB: Loading buffer pool(s) from D:\phpstudy_pro\Extensions\MySQL5.7.26\data\ib_buffer_pool
+2019-06-13T01:33:17.073902Z 0 [Warning] Failed to set up SSL because of the following SSL library error: SSL context is not usable without certificate and private key
+2019-06-13T01:33:17.074902Z 0 [Note] Server hostname (bind-address): '*'; port: 3306
+2019-06-13T01:33:17.075902Z 0 [Note] IPv6 is available.
+2019-06-13T01:33:17.075902Z 0 [Note]   - '::' resolves to '::';
+2019-06-13T01:33:17.076902Z 0 [Note] Server socket created on IP: '::'.
+2019-06-13T01:33:17.539902Z 0 [Note] InnoDB: Buffer pool(s) load completed at 190613  9:33:17
+2019-06-13T01:33:17.551902Z 0 [Note] Event Scheduler: Loaded 0 events
+2019-06-13T01:33:17.552902Z 0 [Note] D:\phpstudy_pro\COM\..\Extensions\MySQL5.7.26\bin\mysqld.exe: ready for connections.
+Version: '5.7.26'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2019-06-13T01:35:34.843902Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-06-13T01:35:34.843902Z 0 [Note] --secure-file-priv is set to NULL. Operations related to importing and exporting data are disabled
+2019-06-13T01:35:34.843902Z 0 [Note] D:\phpstudy_pro\COM\..\Extensions\MySQL5.7.26\bin\mysqld.exe (mysqld 5.7.26) starting as process 10228 ...
+2019-06-13T01:35:34.849902Z 0 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2019-06-13T01:35:34.850902Z 0 [Note] InnoDB: Uses event mutexes
+2019-06-13T01:35:34.850902Z 0 [Note] InnoDB: _mm_lfence() and _mm_sfence() are used for memory barrier
+2019-06-13T01:35:34.851902Z 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2019-06-13T01:35:34.851902Z 0 [Note] InnoDB: Number of pools: 1
+2019-06-13T01:35:34.852902Z 0 [Note] InnoDB: Not using CPU crc32 instructions
+2019-06-13T01:35:34.855902Z 0 [Note] InnoDB: Initializing buffer pool, total size = 128M, instances = 1, chunk size = 128M
+2019-06-13T01:35:34.862902Z 0 [Note] InnoDB: Completed initialization of buffer pool
+2019-06-13T01:35:34.906902Z 0 [Note] InnoDB: Highest supported file format is Barracuda.
+2019-06-13T01:35:34.909902Z 0 [Note] InnoDB: Log scan progressed past the checkpoint lsn 2525060
+2019-06-13T01:35:34.909902Z 0 [Note] InnoDB: Doing recovery: scanned up to log sequence number 2525069
+2019-06-13T01:35:34.910902Z 0 [Note] InnoDB: Database was not shutdown normally!
+2019-06-13T01:35:34.910902Z 0 [Note] InnoDB: Starting crash recovery.
+2019-06-13T01:35:35.118902Z 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2019-06-13T01:35:35.118902Z 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2019-06-13T01:35:35.119902Z 0 [Note] InnoDB: Setting file '.\ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2019-06-13T01:35:35.180902Z 0 [Note] InnoDB: File '.\ibtmp1' size is now 12 MB.
+2019-06-13T01:35:35.182902Z 0 [Note] InnoDB: 96 redo rollback segment(s) found. 96 redo rollback segment(s) are active.
+2019-06-13T01:35:35.182902Z 0 [Note] InnoDB: 32 non-redo rollback segment(s) are active.
+2019-06-13T01:35:35.183902Z 0 [Note] InnoDB: 5.7.26 started; log sequence number 2525069
+2019-06-13T01:35:35.184902Z 0 [Note] InnoDB: Loading buffer pool(s) from D:\phpstudy_pro\Extensions\MySQL5.7.26\data\ib_buffer_pool
+2019-06-13T01:35:35.184902Z 0 [Note] Plugin 'FEDERATED' is disabled.
+2019-06-13T01:35:35.195902Z 0 [Warning] Failed to set up SSL because of the following SSL library error: SSL context is not usable without certificate and private key
+2019-06-13T01:35:35.196902Z 0 [Note] Server hostname (bind-address): '*'; port: 3306
+2019-06-13T01:35:35.197902Z 0 [Note] IPv6 is available.
+2019-06-13T01:35:35.198902Z 0 [Note]   - '::' resolves to '::';
+2019-06-13T01:35:35.199902Z 0 [Note] Server socket created on IP: '::'.
+2019-06-13T01:35:35.224902Z 0 [Note] InnoDB: Buffer pool(s) load completed at 190613  9:35:35
+2019-06-13T01:35:35.236902Z 0 [Note] Event Scheduler: Loaded 0 events
+2019-06-13T01:35:35.237902Z 0 [Note] D:\phpstudy_pro\COM\..\Extensions\MySQL5.7.26\bin\mysqld.exe: ready for connections.
+Version: '5.7.26'  socket: ''  port: 3306  MySQL Community Server (GPL)
