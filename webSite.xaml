@@ -20,7 +20,6 @@
                 <TextBox x:Name="siteFileInput" Height="24" Text="index.html,index.htm" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="158" Canvas.Left="2" LostFocus="siteFileInput_LostFocus" ToolTip="多个文件类型用英文空格隔开"/>
                 <Label Content="网站默认文件" Height="26" Width="172" Canvas.Top="127" Canvas.Left="-1"/>
                 <Label x:Name="removeWebSite" Style="{StaticResource dangerBtnLable}" Content="删 除" Height="25" Width="48" Padding="10,5,5,5" Canvas.Left="624" Canvas.Top="352" Visibility="Visible" MouseDown="removeWebSite_MouseDown"/>
-                <TextBox Height="116" Canvas.Left="27" Canvas.Top="197" Text="TextBox" TextWrapping="Wrap" Width="282" IsReadOnly="True"/>
             </Canvas>
         </GroupBox>
         <GroupBox Header="高级设置" Margin="400,12,21,47">
