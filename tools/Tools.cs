@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -13,17 +14,37 @@ namespace wnmp.tools
     /// </summary>
     public class Tools
     {
-        public static string NginxRoot = "wnmp/nginx-1.18.0/";
-        public static string MysqlRoot = "wnmp/mysql-5.7.26/";
-        public static string PHPRoot = "wnmp/php/php7.3.4nts/";
+        public string NginxRoot = "";
+        public string MysqlRoot = "";
+        public string PHPRoot = "";
+
+        public string[] nginxVersions = { };
+        public string[] mysqlVersions = { };
+        public string[] phpVersions = { };
+
+        private AppConf appConf;
+        public string RootPath = "";
+        [DllImport("User32.dll")]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
         /// <summary>
         /// 初始化运行环境
         /// </summary>
-        public static void InitApp()
+        public Tools(AppConf ac)
         {
+            RootPath = Site.GetRootPath();
+            appConf = ac;
+            
+        }
+        /// <summary>
+        /// 重新加载配置
+        /// </summary>
+        public void loadPath()
+        {
+            NginxRoot = "wnmp/nginx/" + appConf.nginxVersion + "/";
+            MysqlRoot = "wnmp/mysql/" + appConf.mysqlVersion + "/";
+            PHPRoot = "wnmp/php/" + appConf.phpVersion + "/";
 
         }
-
         /// <summary>
         /// 加载运行配置
         /// </summary>
@@ -38,14 +59,70 @@ namespace wnmp.tools
                 sw.Close();
             }
         }
+        /// <summary>
+        /// 获取当前可用版本
+        /// </summary>
+        public void getWnmpVersions()
+        {
+            try
+            {
+                //nginx
+                nginxVersions = Directory.GetDirectories(RootPath + "wnmp/nginx");
+                for (int i = 0; i < nginxVersions.Length; i++)
+                {
+                    nginxVersions[i] = Path.GetFileName(nginxVersions[i]);
+                }
+                //mysql
+                mysqlVersions = Directory.GetDirectories(RootPath + "wnmp/mysql");
+                for (int i = 0; i < mysqlVersions.Length; i++)
+                {
+                    mysqlVersions[i] = Path.GetFileName(mysqlVersions[i]);
+                }
+                //php
+                phpVersions = Directory.GetDirectories(RootPath + "wnmp/php");
+                for (int i = 0; i < phpVersions.Length; i++)
+                {
+                    phpVersions[i] = Path.GetFileName(phpVersions[i]);
+                }
+            }
+            catch
+            {
 
+            }
+            
+        }
+        /// <summary>
+        /// 记事本打开配置文件
+        /// </summary>
+        /// <param name="confType">配置名称 nginx,mysql,php</param>
+        public void OpenConf(string confType)
+        {
+            loadPath();
+            string path = NginxRoot+"conf/nginx.conf";
+            switch (confType)
+            {
+                case "nginx":
+                    path = NginxRoot + "conf/nginx.conf";
+                    break;
+                case "mysql":
+                    path = MysqlRoot+"my.ini";
+                    break;
+                case "php":
+                    path = PHPRoot+"php.ini";
+                    break;
+                case "hosts":
+                    path = "C:/Windows/System32/drivers/etc/hosts";
+                    break;
+            }
+            Process.Start("notepad.exe", path);
+        }
         /// <summary>
         /// 管理nginx
         /// </summary>
         /// <param name="cmd">管理命令 start stop restart </param>
-        public static void CmdNginx(string cmd)
+        public void CmdNginx(string cmd)
         {
-            
+            loadPath();
             string path = Site.GetRootPath()+NginxRoot + "/nginx.exe";
             if (!File.Exists(path))
             {
@@ -119,8 +196,9 @@ namespace wnmp.tools
         /// <param name="path">工作空间</param>
         /// <param name="isReturn">是否等待</param>
         /// <returns>返回字符结果</returns>
-        public static string RunCMD(string cmd,string path, bool isReturn)
+        public string RunCMD(string cmd,string path, bool isReturn)
         {
+            loadPath();
             Process pro = new Process();
             pro.StartInfo.FileName = "cmd.exe";
             pro.StartInfo.UseShellExecute = false;
@@ -152,8 +230,9 @@ namespace wnmp.tools
         /// 检测Nginx是否正在运行
         /// </summary>
         /// <returns></returns>
-        public static bool NginxIsRunning()
+        public bool NginxIsRunning()
         {
+            loadPath();
             Process[] pp = Process.GetProcessesByName("nginx");
             if (pp.Length > 0)
             {
@@ -169,9 +248,9 @@ namespace wnmp.tools
         /// 管理Mysql
         /// </summary>
         /// <param name="cmd">管理命令 start stop restart </param>
-        public static void CmdMysql(string cmd)
+        public void CmdMysql(string cmd)
         {
-
+            loadPath();
             string path = Site.GetRootPath() + MysqlRoot + "bin/mysqld.exe";
             if (!File.Exists(path))
             {
@@ -246,8 +325,9 @@ namespace wnmp.tools
         /// <summary>
         /// 检查Mysql配置并自动修复
         /// </summary>
-        public static void CheckMysqlINI()
+        public void CheckMysqlINI()
         {
+            loadPath();
             string ini = Site.GetRootPath() + MysqlRoot;
             string path = ini + "defaultIni";
             if (File.Exists(path))
@@ -293,8 +373,9 @@ namespace wnmp.tools
         /// 检测Mysql是否正在运行
         /// </summary>
         /// <returns></returns>
-        public static bool MysqlIsRunning()
+        public bool MysqlIsRunning()
         {
+            loadPath();
             Process[] pp = Process.GetProcessesByName("mysqld");
             if (pp.Length > 0)
             {
@@ -310,9 +391,9 @@ namespace wnmp.tools
         /// 管理PHP
         /// </summary>
         /// <param name="cmd">管理命令 start stop restart </param>
-        public static void CmdPHP(string cmd)
+        public void CmdPHP(string cmd)
         {
-
+            loadPath();
             string path = Site.GetRootPath() + PHPRoot + "php-cgi.exe";
             if (!File.Exists(path))
             {
@@ -387,8 +468,9 @@ namespace wnmp.tools
         /// 检测PHP是否正在运行
         /// </summary>
         /// <returns></returns>
-        public static bool PHPIsRunning()
+        public bool PHPIsRunning()
         {
+            loadPath();
             Process[] pp = Process.GetProcessesByName("php-cgi");
             
             if (pp.Length > 0)
@@ -399,6 +481,33 @@ namespace wnmp.tools
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 检查程序是否已在运行
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckAppIsRunning()
+        {
+            loadPath();
+            try
+            {
+                Process[] ps = Process.GetProcessesByName("wnmp");
+                Process p = Process.GetCurrentProcess();
+                foreach (var item in ps)
+                {
+                    if (p.Id != item.Id)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+            
         }
     }
 }

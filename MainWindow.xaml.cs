@@ -1,20 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Shell;
+using wnmp.pages;
 using wnmp.tools;
 
 namespace wnmp
@@ -25,6 +18,7 @@ namespace wnmp
     public partial class MainWindow : Window
     {
         private WebSite ws;
+        private download DownloadPage;
         private List<SiteConf> SiteList;
         private bool NginxStopping = false;
         private bool MysqlStopping = false;
@@ -32,13 +26,56 @@ namespace wnmp
         private bool AppQuit = false;
         private long LastClickTime;//防重复点击
         private int CheckTime = 5*1000;//监控间隔时间
+        private bool UIisLoaded = false;//加载完成
+
+        private System.Windows.Forms.NotifyIcon TrayIcon;
+        //主程序配置
+        private AppConf appConf;
+        private Tools tool;
         public MainWindow()
         {
             InitializeComponent();
+
+            //初始化
+            InitApp();
+        }
+        private void InitApp()
+        {
+            //加载配置
+            appConf = new AppConf();
+            
+            tool = new Tools(appConf);
+            //多开限制
+            if (tool.CheckAppIsRunning())
+            {
+                MessageBox.Show("程序已在运行中，可在任务栏查看！", "错误");
+                Environment.Exit(0);
+                return;
+
+            }
+            tool.getWnmpVersions();
             //异步加载
             new Thread(() => {
-                this.Dispatcher.Invoke(new Action(() => {
+
+                //配置检查
+                if (appConf.checkNewVersion(appConf.appNewVersion))
+                {
+                    Dispatcher.Invoke(new Action(() => {
+                        MessageBoxResult mbr = MessageBox.Show("有新版本可用，是否立即更新？", "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (mbr == MessageBoxResult.Yes)
+                        {
+                            UpdateVersion();
+                        }
+
+                    }));
+                }
+                Dispatcher.Invoke(new Action(() => {
+                    //设置UI
+                    initUI();
+                    //加载站点
                     loadList(false);
+                    //加载完成
+                    UIisLoaded = true;
                 }));
             }).Start();
             //nginx 监控
@@ -58,9 +95,81 @@ namespace wnmp
             logBox.ContextMenu.Items.Add(logClean);
 
             //检测Mysql配置
-            Tools.CheckMysqlINI();
+            tool.CheckMysqlINI();
         }
+        /// <summary>
+        /// 初始化UI
+        /// </summary>
+        private void initUI(bool loadList=true)
+        {
+            Title = appConf.appName + "集成管理";
+            versionBox.Content = appConf.appName + appConf.appVersion;
+            phpVersionLabel.Content = "PHP " + appConf.phpVersion;
+            mysqlVersionLabel.Content = "Mysql " + appConf.mysqlVersion;
+            nginxVersionLabel.Content = "Nginx " + appConf.nginxVersion;
+            if (appConf.autoUpdate=="1")
+            {
+                autoUpdate.IsChecked = true;
+            }
+            else
+            {
+                autoUpdate.IsChecked = false;
+            }
+            if (appConf.quitType == "1")
+            {
+                quitType.IsChecked = true;
+            }
+            else
+            {
+                quitType.IsChecked = false;
+            }
+            if (!loadList)
+            {
+                return;
+            }
+            //获取可以软件版本
+            tool.getWnmpVersions();
+            for (int i = 0; i < tool.nginxVersions.Length; i++)
+            {
+                nginxVersionSelect.Items.Add(tool.nginxVersions[i]);
+                if (tool.nginxVersions[i] == appConf.nginxVersion)
+                {
+                    nginxVersionSelect.SelectedIndex = i;
+                }   
+            }
+            for (int i = 0; i < tool.mysqlVersions.Length; i++)
+            {
+                mysqlVersionSelect.Items.Add(tool.mysqlVersions[i]);
+                if (tool.mysqlVersions[i] == appConf.mysqlVersion)
+                {
+                    mysqlVersionSelect.SelectedIndex = i;
+                }
+            }
+            for (int i = 0; i < tool.phpVersions.Length; i++)
+            {
+                phpVersionSelect.Items.Add(tool.phpVersions[i]);
+                if (tool.phpVersions[i] == appConf.phpVersion)
+                {
+                    phpVersionSelect.SelectedIndex = i;
+                }
+            }
+        }
+        /// <summary>
+        /// 更新版本
+        /// </summary>
+        private void UpdateVersion()
+        {
+            try
+            {
+                //加载更新程序
+                string exe = Site.GetRootPath() + "/wnmpUpdate.exe";
+                Process.Start(exe);
+            }
+            catch
+            {
 
+            }
+        }
         private void logClean_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //清除日志
@@ -73,7 +182,7 @@ namespace wnmp
 
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -87,7 +196,7 @@ namespace wnmp
             sc.staticRoot = "/";
             sc.siteRoot = "C:\\Users";
             sc.sitePort = "80";
-            sc.siteFile = "index.html";
+            sc.siteFile = "index.html index.php";
             sc.IsNew = true;
             openSiteWindow(sc);
 
@@ -112,7 +221,7 @@ namespace wnmp
                     Padding = new Thickness(250,105,0,0)
                 };
                 siteListBox.Items.Add(cc);
-                SiteList = Site.GetSiteList();
+                SiteList = (new Site(appConf)).GetSiteList();
                 siteListBox.Items.Clear();
             }
             foreach (var item in SiteList)
@@ -123,7 +232,7 @@ namespace wnmp
                 //域名
                 Label l1 = new Label
                 {
-                    Content = item.domainName,
+                    Content = item.domainName.Split(" ")[0],
                     Width = 135,
                     Height = 25,
                     Margin = new Thickness(10, 5, 0, 0),
@@ -147,7 +256,8 @@ namespace wnmp
                     Content = item.siteRoot,
                     Width = 200,
                     Height = 25,
-                    Margin = new Thickness(255, 5, 0, 0)
+                    Margin = new Thickness(255, 5, 0, 0),
+                    ToolTip = item.siteRoot
                 };
                 c.Children.Add(l3);
                 //状态
@@ -186,7 +296,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -210,15 +320,16 @@ namespace wnmp
         {
             //打开默认浏览器
             Label l = (Label)sender;
-            string domainName = l.Content.ToString().Trim();
+            string domainName = l.Content.ToString().Trim().Split(" ")[0];
             if (domainName != "")
             {
                 foreach (var item in SiteList)
                 {
-                    if (item.domainName == domainName)
+                    if (item.domainName.IndexOf(domainName)!=-1)
                     {
                         string url = "http://" + domainName + ":"+item.sitePort;
                         Process.Start("explorer", url);
+                        break;
                     }
                 }
                 
@@ -234,7 +345,7 @@ namespace wnmp
             //
             if (ws == null)
             {
-                ws = new WebSite(sc,this);
+                ws = new WebSite(sc,this,appConf);
                 ws.Owner = this;
                 ws.Show();
             }
@@ -249,7 +360,7 @@ namespace wnmp
                 catch
                 {
                     ws = null;
-                    ws = new WebSite(sc,this);
+                    ws = new WebSite(sc,this,appConf);
                     ws.Owner = this;
                     ws.Show();
                 }
@@ -261,7 +372,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -285,7 +396,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -298,8 +409,8 @@ namespace wnmp
             var str = btn.Text;
             if(str=="启 动")
             {
-                Log("正在启动Nginx...");
-                Tools.CmdNginx("start");
+                Log("启动Nginx...");
+                tool.CmdNginx("start");
                 btn.Text = "停 止";
                 nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0,255,0));
             }
@@ -310,7 +421,7 @@ namespace wnmp
                 Log("正在停止Nginx...");
                 try
                 {
-                    Tools.CmdNginx("stop");
+                    tool.CmdNginx("stop");
                     btn.Text = "启 动";
                     nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                 }
@@ -334,7 +445,7 @@ namespace wnmp
                     {
                         break;
                     }
-                    if (Tools.NginxIsRunning())
+                    if (tool.NginxIsRunning())
                     {
                         Dispatcher.Invoke(new Action(() => {
                             nginxRunBtn.Text = "停 止";
@@ -366,7 +477,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -375,10 +486,10 @@ namespace wnmp
                 LastClickTime = time;
             }
             //重启nginx
-            if (Tools.NginxIsRunning())
+            if (tool.NginxIsRunning())
             {
-                Log("正在重启Nginx...");
-                Tools.CmdNginx("restart");
+                Log("重启Nginx...");
+                tool.CmdNginx("restart");
                 nginxRunBtn.Text = "停 止";
                 nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
             }
@@ -386,16 +497,27 @@ namespace wnmp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            e.Cancel = true;
+            
+        }
+        private void show_windows(object sender, EventArgs e)
+        {
+            //从任务栏重新显示界面
+            this.Show();
+        }
+        private void close_windows(object sender, EventArgs e)
+        {
             //退出程序
             AppQuit = true;
-            if (Tools.NginxIsRunning()){
-                Tools.CmdNginx("stop");
-            }
-            if (Tools.MysqlIsRunning())
+            if (tool.NginxIsRunning())
             {
-                Tools.CmdMysql("stop");
+                tool.CmdNginx("stop");
             }
-
+            if (tool.MysqlIsRunning())
+            {
+                tool.CmdMysql("stop");
+            }
+            Environment.Exit(0);
         }
         /// <summary>
         /// 监控Mysql主进程 每隔5秒
@@ -409,7 +531,7 @@ namespace wnmp
                     {
                         break;
                     }
-                    if (Tools.MysqlIsRunning())
+                    if (tool.MysqlIsRunning())
                     {
                         Dispatcher.Invoke(new Action(() => {
                             mysqlRunBtn.Text = "停 止";
@@ -441,7 +563,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -454,8 +576,8 @@ namespace wnmp
             var str = btn.Text;
             if (str == "启 动")
             {
-                Log("正在启动Mysql...");
-                Tools.CmdMysql("start");
+                Log("启动Mysql...");
+                tool.CmdMysql("start");
                 btn.Text = "停 止";
                 mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
             }
@@ -466,7 +588,7 @@ namespace wnmp
                 try
                 {
                     Log("正在停止Mysql...");
-                    Tools.CmdMysql("stop");
+                    tool.CmdMysql("stop");
                     btn.Text = "启 动";
                     mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                 }
@@ -482,7 +604,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -491,12 +613,12 @@ namespace wnmp
                 LastClickTime = time;
             }
             //重启mysql
-            if (Tools.MysqlIsRunning())
+            if (tool.MysqlIsRunning())
             {
                 try
                 {
-                    Log("正在重启Mysql...");
-                    Tools.CmdMysql("restart");
+                    Log("重启Mysql...");
+                    tool.CmdMysql("restart");
                     mysqlRunBtn.Text = "停 止";
                     mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
                 }
@@ -518,6 +640,7 @@ namespace wnmp
             if (logBox.Text != "")
             {
                 logBox.Text += "\r" + DateTime.Now.ToString() + " ：" + txt;
+                logboxwarp.ScrollToEnd();
             }
             else
             {
@@ -530,7 +653,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -543,8 +666,8 @@ namespace wnmp
             var str = btn.Text;
             if (str == "启 动")
             {
-                Log("正在启动PHP...");
-                Tools.CmdPHP("start");
+                Log("启动PHP...");
+                tool.CmdPHP("start");
                 btn.Text = "停 止";
                 phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
             }
@@ -554,11 +677,11 @@ namespace wnmp
                 {
                     return;
                 }
-                MysqlStopping = true;
+                PHPStopping = true;
                 try
                 {
                     Log("正在停止PHP...");
-                    Tools.CmdPHP("stop");
+                    tool.CmdPHP("stop");
                     btn.Text = "启 动";
                     phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                 }
@@ -581,7 +704,7 @@ namespace wnmp
                     {
                         break;
                     }
-                    if (Tools.PHPIsRunning())
+                    if (tool.PHPIsRunning())
                     {
                         Dispatcher.Invoke(new Action(() => {
                             phpRunBtn.Text = "停 止";
@@ -612,7 +735,7 @@ namespace wnmp
         {
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            if (LastClickTime > time - 3)
+            if (LastClickTime > time - 1)
             {
                 return;
             }
@@ -621,12 +744,12 @@ namespace wnmp
                 LastClickTime = time;
             }
             //重启php
-            if (Tools.PHPIsRunning())
+            if (tool.PHPIsRunning())
             {
                 try
                 {
-                    Log("正在重启PHP...");
-                    Tools.CmdPHP("restart");
+                    Log("重启PHP...");
+                    tool.CmdPHP("restart");
                     phpRunBtn.Text = "停 止";
                     phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
                 }
@@ -636,6 +759,222 @@ namespace wnmp
                 }
 
             }
+        }
+
+        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //查看nginx配置
+            tool.OpenConf("nginx");
+        }
+
+        private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //查看mysql配置
+            tool.OpenConf("mysql");
+        }
+
+        private void Label_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
+        {
+            //查看php配置
+            tool.OpenConf("php");
+        }
+
+        private void Label_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //手动更新
+            UpdateVersion();
+        }
+
+        private void Label_MouseLeftButtonDown_2(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
+        }
+
+        private void close_windows(object sender, MouseButtonEventArgs e)
+        {
+            if (appConf.quitType == "0")
+            {
+                //退出程序
+                AppQuit = true;
+                if (tool.NginxIsRunning())
+                {
+                    tool.CmdNginx("stop");
+                }
+                if (tool.MysqlIsRunning())
+                {
+                    tool.CmdMysql("stop");
+                }
+                if (tool.PHPIsRunning())
+                {
+                    tool.CmdPHP("stop");
+                }
+                Environment.Exit(0);
+            }
+            else
+            {
+                this.Hide();
+                //退出到任务栏
+                if (TrayIcon == null)
+                {
+                    TrayIcon = new System.Windows.Forms.NotifyIcon();
+                    TrayIcon.Icon = new System.Drawing.Icon("logo.ico");
+                    TrayIcon.BalloonTipText = appConf.appName + appConf.appVersion + "正在运行";
+                    TrayIcon.Text = appConf.appName + appConf.appVersion + "正在运行";
+
+                    TrayIcon.MouseDoubleClick += show_windows;
+                    TrayIcon.ShowBalloonTip(1000);
+
+                    TrayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+                    TrayIcon.ContextMenuStrip.Items.Add("退出程序");
+                    TrayIcon.ContextMenuStrip.MouseClick += close_windows;
+                }
+                TrayIcon.Visible = true;
+            }
+            
+        }
+
+        private void Label_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void quitType_Click(object sender, RoutedEventArgs e)
+        {
+            //防重复点击
+            long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
+            if (LastClickTime > time - 1)
+            {
+                return;
+            }
+            else
+            {
+                LastClickTime = time;
+            }
+
+            if ((bool)quitType.IsChecked)
+            {
+                appConf.quitType = "1";
+            }
+            else
+            {
+                appConf.quitType = "0";
+            }
+            
+            appConf.Save();
+        }
+
+        private void autoUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            //防重复点击
+            long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
+            if (LastClickTime > time - 1)
+            {
+                return;
+            }
+            else
+            {
+                LastClickTime = time;
+            }
+
+            if ((bool)autoUpdate.IsChecked)
+            {
+                appConf.autoUpdate = "1";
+            }
+            else
+            {
+                appConf.autoUpdate = "0";
+            }
+
+            appConf.Save();
+        }
+        /// <summary>
+        /// 切换PHP程序版本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void phpVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int i = phpVersionSelect.SelectedIndex;
+            if (UIisLoaded)
+            {
+                if (!tool.PHPIsRunning())
+                {
+                    appConf.phpVersion = tool.phpVersions[i];
+                    appConf.Save();
+                    initUI(false);
+                }
+                else
+                {
+                    //phpVersionSelect.SelectedIndex = (new ArrayList(tool.phpVersions)).IndexOf(appConf.phpVersion);
+                    MessageBox.Show("请先停止PHP", "错误");
+                }
+                
+            }
+        }
+
+        private void nginxVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int i = nginxVersionSelect.SelectedIndex;
+            if (UIisLoaded)
+            {
+                if (!tool.NginxIsRunning())
+                {
+                    appConf.nginxVersion = tool.nginxVersions[i];
+                    appConf.Save();
+                    initUI(false);
+                }
+                else
+                {
+                    MessageBox.Show("请先停止Nginx", "错误");
+                }
+                
+            }
+        }
+
+        private void mysqlVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int i = mysqlVersionSelect.SelectedIndex;
+            if (UIisLoaded)
+            {
+                if (!tool.MysqlIsRunning())
+                {
+                    appConf.mysqlVersion = tool.mysqlVersions[i];
+                    appConf.Save();
+                    initUI(false);
+                }
+                else
+                {
+                    MessageBox.Show("请先停止Mysql", "错误");
+                }
+
+            }
+        }
+
+        private void refreshWebSIteBtn_Copy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            //打开软件下载界面
+            if (DownloadPage == null)
+            {
+                DownloadPage = new download();
+            }
+            else
+            {
+                try
+                {
+                    DownloadPage.Activate();
+                    DownloadPage.Show();
+                }
+                catch
+                {
+                    DownloadPage = new download();
+                }
+                
+            }
+            DownloadPage.WindowState = WindowState.Normal;
+
         }
     }
 }

@@ -10,16 +10,17 @@
         <GroupBox Header="常规设置" Margin="19,12,405,47">
             <Canvas Margin="0,0,-2,-3">
                 <Label Style="{StaticResource defautBtnLable}" Content="保 存" Height="25" Width="48" Padding="10,5,5,5" Canvas.Left="696.6" Canvas.Top="351.8" MouseDown="Label_MouseDown"/>
-                <TextBox x:Name="domainNameInput" Height="24" Text="www.jh.xyz" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="37" Canvas.Left="2"/>
+                <TextBox x:Name="domainNameInput" Height="24" Text="www.jh.xyz" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="37" Canvas.Left="2" ToolTip="多域名间用英文空格隔开"/>
                 <Label Content="网站域名" Height="26" Width="74" Canvas.Top="6" Canvas.Left="-1"/>
                 <TextBox x:Name="siteRootInput" Height="24" Text="D:\\www" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="98" Canvas.Left="2" ToolTip="网站根目录" IsEnabled="False"/>
                 <Label Content="网站目录" Height="26" Width="172" Canvas.Top="67" Canvas.Left="-1"/>
                 <Label Style="{StaticResource defautBtnLable}" Content="目录" Height="25" Width="41" Padding="9,5,5,5" Canvas.Left="309" Canvas.Top="98" MouseDown="Label_MouseDown_1"/>
                 <TextBox x:Name="sitePortInput" Height="24" Text="80" TextWrapping="Wrap" Width="41" Padding="0,3,0,0" Canvas.Left="309" Canvas.Top="37" LostFocus="sitePortInput_LostFocus"/>
                 <Label Content="端口" Height="26" Width="41" Canvas.Left="309" Canvas.Top="6"/>
-                <TextBox x:Name="siteFileInput" Height="24" Text="index.html,index.htm" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="158" Canvas.Left="2" LostFocus="siteFileInput_LostFocus"/>
+                <TextBox x:Name="siteFileInput" Height="24" Text="index.html,index.htm" TextWrapping="Wrap" Width="302" Padding="0,3,0,0" Canvas.Top="158" Canvas.Left="2" LostFocus="siteFileInput_LostFocus" ToolTip="多个文件类型用英文空格隔开"/>
                 <Label Content="网站默认文件" Height="26" Width="172" Canvas.Top="127" Canvas.Left="-1"/>
                 <Label x:Name="removeWebSite" Style="{StaticResource dangerBtnLable}" Content="删 除" Height="25" Width="48" Padding="10,5,5,5" Canvas.Left="624" Canvas.Top="352" Visibility="Visible" MouseDown="removeWebSite_MouseDown"/>
+                <TextBox Height="116" Canvas.Left="27" Canvas.Top="197" Text="TextBox" TextWrapping="Wrap" Width="282" IsReadOnly="True"/>
             </Canvas>
         </GroupBox>
         <GroupBox Header="高级设置" Margin="400,12,21,47">
@@ -35,11 +36,12 @@
                 <GroupBox Header="其它" Height="178" Canvas.Left="10" Canvas.Top="137" Width="335">
                     <Canvas Margin="0,0,-12,-12">
                         <CheckBox x:Name="gzipBox" Content="开启" Width="52" Height="20" Canvas.Left="73.8" Canvas.Top="25.38" IsChecked="True"/>
-                        <Label Content="Host同步：" Height="26" Width="64" Canvas.Top="70.193" Canvas.Left="1.4"/>
+                        <Label Content="Hosts同步：" Height="26" Width="71" Canvas.Top="70" Canvas.Left="1"/>
                         <Label Content="压 缩：" Height="26" Width="64" Canvas.Top="18.193" Canvas.Left="2.2"/>
                         <CheckBox x:Name="crossBox" Content="开启" Width="68" Height="20" Canvas.Left="74" Canvas.Top="50.193"/>
                         <Label Content="网站跨域：" Height="26" Width="61" Canvas.Top="44.193" Canvas.Left="2"/>
                         <CheckBox x:Name="hostBox" Content="开启" Width="68" Height="20" Canvas.Left="74" Canvas.Top="76.193" IsChecked="True"/>
+                        <Label Content="查看Hosts" Height="24" Canvas.Left="140" Canvas.Top="71" Width="67" Foreground="#FF021FBA" Cursor="Hand" MouseUp="Label_MouseUp"/>
                     </Canvas>
                 </GroupBox>
             </Canvas>

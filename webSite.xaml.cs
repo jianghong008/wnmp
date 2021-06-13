@@ -14,10 +14,14 @@ namespace wnmp
     public partial class WebSite : Window
     {
         private SiteConf conf;//站点配置
+        private Site site;
+        private AppConf appConf;
         private MainWindow fWindow;//父窗口
-        public WebSite(SiteConf sc, MainWindow app)
+        public WebSite(SiteConf sc, MainWindow app,AppConf ac)
         {
             InitializeComponent();
+            appConf = ac;
+            site = new Site(appConf);
             conf = sc;
             fWindow = app;
             if (conf != null)
@@ -34,7 +38,7 @@ namespace wnmp
             {
                 removeWebSite.Visibility = Visibility.Visible;
             }
-            Site.EditHost("test.xyz",null,false);
+            //Site.EditHost("www.test.xyz", null,false);
         }
 
         /*
@@ -46,7 +50,7 @@ namespace wnmp
             {
                 try
                 {
-                    Site.AddSite(GetSiteConfFromForm());
+                    site.AddSite(GetSiteConfFromForm());
                     fWindow.LoadList();
                     Close();
                 }
@@ -70,6 +74,7 @@ namespace wnmp
        private SiteConf GetSiteConfFromForm()
        {
             SiteConf conf = new SiteConf();
+            //域名
             if (!conf.checkDomain(domainNameInput.Text))
             {
                 conf.domainName = "";
@@ -78,6 +83,8 @@ namespace wnmp
             {
                 conf.domainName = domainNameInput.Text;
             }
+            //处理多个域名
+
             //端口
             conf.sitePort = sitePortInput.Text;
             //站点目录
@@ -116,7 +123,7 @@ namespace wnmp
         private void removeWebSite_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //删除网站
-            Site.RemoveSite(conf);
+            site.RemoveSite(conf);
             fWindow.LoadList();
             Close();
         }
@@ -166,6 +173,13 @@ namespace wnmp
                 System.Windows.MessageBox.Show("网站端口必须为整数");
             }
            
+        }
+
+        private void Label_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            //查看Host配置
+            
+            (new Tools(appConf)).OpenConf("hosts");
         }
     }
 }

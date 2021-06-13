@@ -13,7 +13,7 @@ namespace wnmp.tools
         public string domainName = "";
         public string sitePort = "80";
         public string siteRoot = "c:\\www";
-        public string siteFile = "index.html";
+        public string siteFile = "index.html index.php";
         public bool staticStatus = true;
         public string staticRoot = "/";
         public bool gzip = true;
@@ -21,6 +21,10 @@ namespace wnmp.tools
         public bool host = true;
         public bool IsNew = false;
         public string remake = "正常";
+        /// <summary>
+        /// 配置源码
+        /// </summary>
+        public string ConfText = "";
 
         /// <summary>
         /// 检查域名

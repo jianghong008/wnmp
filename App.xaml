@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary  Source="style/main.xaml"/>
                 <ResourceDictionary  Source="style/MyScrollViewer.xaml"/>
+                <ResourceDictionary  Source="style/tabContr.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
