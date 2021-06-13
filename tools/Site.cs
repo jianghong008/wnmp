@@ -10,10 +10,16 @@ namespace wnmp.tools
 {
     class Site
     {
-        //添加站点
-        public static void AddSite(SiteConf conf)
+        private AppConf appConf;
+        public Site(AppConf ac)
         {
-            string confPath = GetRootPath()+ Tools.NginxRoot + "conf/vhosts/" + conf.domainName+".conf";
+            appConf = ac;
+        }
+        //添加站点
+        public void AddSite(SiteConf conf)
+        {
+            string conf_name = conf.domainName.Split(" ")[0];
+            string confPath = GetRootPath()+ appConf.NginxRoot + "conf/vhosts/" + conf_name + ".conf";
             if (File.Exists(confPath))
             {
                 File.Delete(confPath);
@@ -71,7 +77,7 @@ namespace wnmp.tools
                 sw.WriteLine("\t#url重写");
                 sw.WriteLine("\tlocation "+conf.staticRoot+" {");
                 sw.WriteLine("\t\tif (!-e $request_filename) {");
-                sw.WriteLine("\t\t\trewrite  ^(.*)$  /index.php?s=/$1  last;");
+                sw.WriteLine("\t\t\trewrite  ^(.*)$  /index.php$1  last;");
                 sw.WriteLine("\t\t\tbreak; ");
                 sw.WriteLine("\t\t}");
                 sw.WriteLine("\t}");
@@ -93,17 +99,18 @@ namespace wnmp.tools
         /// 删除站点
         /// </summary>
         /// <param name="sc">站点配置</param>
-        public static void RemoveSite(SiteConf sc)
+        public void RemoveSite(SiteConf sc)
         {
             //先删除站点配置
-            string confPath = GetRootPath() + Tools.NginxRoot+ "conf/vhosts/" + sc.domainName+".conf";
+            string conf_name = sc.domainName.Split(" ")[0];
+            string confPath = GetRootPath() + appConf.NginxRoot+ "conf/vhosts/" + conf_name + ".conf";
             if (File.Exists(confPath))
             {
                 try
                 {
                     File.Delete(confPath);
                     //再删除hosts
-                    EditHost(sc.domainName, null, false);
+                    EditHost(conf_name, null, false);
                 }
                 catch(Exception e)
                 {
@@ -120,8 +127,9 @@ namespace wnmp.tools
         /// <param name="doMainName">绑定域名</param>
         /// <param name="newName">新的域名</param>
         /// /// <param name="add">是否新增</param>
-        public static void EditHost(string doMainName,string newName,bool add)
+        public void EditHost(string doMainName,string newName,bool add)
         {
+            string conf_name = doMainName.Split(" ")[0];
             string filePath = "C:\\Windows\\System32\\drivers\\etc/hosts";
             if (!File.Exists(filePath))
             {
@@ -131,23 +139,27 @@ namespace wnmp.tools
             StreamReader sr = new StreamReader(filePath);
             string text = sr.ReadToEnd();
             sr.Close();
-            string reg_str = @"\n?127.0.0.1\s+" + doMainName +@"\n?";
+            string reg_str = @"[\r\n]?127.0.0.1\s+" + conf_name;
             if (newName != null)
             {
                 //修改
-                text = Regex.Replace(text, doMainName, newName);
+                text = Regex.Replace(text, conf_name, newName);
             }
             else
             {
                 //删除
                 text = Regex.Replace(text, reg_str, "");
+                text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
                 Console.WriteLine(text);
             }
             if (add)
             {
                 //新增
-                text += "\r127.0.0.1 " + doMainName;
+                text += "\r127.0.0.1 " + conf_name;
             }
+            //去掉空行
+            //text = Regex.Replace(text, @"[\s\t\n]", "");
+            //text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
             //重新写入
             StreamWriter sw = new StreamWriter(filePath);
             sw.Write(text);
@@ -174,9 +186,9 @@ namespace wnmp.tools
         /// 获取站点列表
         /// </summary>
         /// <returns>SiteConf</returns>
-        public static List<SiteConf> GetSiteList()
+        public List<SiteConf> GetSiteList()
         {
-            string confPath = GetRootPath()+ Tools.NginxRoot + "conf/vhosts/";
+            string confPath = GetRootPath()+ appConf.NginxRoot + "conf/vhosts/";
             List<SiteConf> ar = new List<SiteConf>();
             try
             {
@@ -244,6 +256,7 @@ namespace wnmp.tools
                     fs.Close();
                     StreamReader ssr = new StreamReader(file[i]);
                     string text = ssr.ReadToEnd();
+                    sc.ConfText = text;
                     ssr.Close();
                     //压缩
                     if (Regex.IsMatch(text, @"\tgzip  on;"))

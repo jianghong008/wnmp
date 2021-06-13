@@ -9,6 +9,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="pages\Download.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="webSite.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -17,10 +20,16 @@
     <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="pages\Download.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="style\main.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="style\MyScrollViewer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="style\tabContr.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="webSite.xaml">

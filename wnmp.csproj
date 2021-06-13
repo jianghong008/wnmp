@@ -15,17 +15,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="logo.png" />
     <None Remove="mysql.jpg" />
     <None Remove="mysql.png" />
     <None Remove="nginx.png" />
     <None Remove="php.png" />
-    <None Include="logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="logo.png" />
     <Resource Include="mysql.png" />
     <Resource Include="nginx.png" />
     <Resource Include="php.png" />

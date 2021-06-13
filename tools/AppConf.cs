@@ -1,0 +1,193 @@
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Windows;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace wnmp.tools
+{
+    /// <summary>
+    /// 主程序配置模型
+    /// </summary>
+    public class AppConf
+    {
+        /// <summary>
+        /// 程序名称
+        /// </summary>
+        public string appName = "wnmp";
+        public string appHost = "";
+        public string autoUpdate = "1";//0-不更新 1-自动更新
+        public string quitType = "1";//0-直接退出 1-隐藏托盘
+        /// <summary>
+        /// 当前版本
+        /// </summary>
+        public string appVersion = "1.0.0";
+        public string appNewVersion = "1.0.0";
+        /// <summary>
+        /// nignx版本
+        /// </summary>
+        public string nginxVersion = "";
+        /// <summary>
+        /// mysql版本
+        /// </summary>
+        public string mysqlVersion = "";
+        /// <summary>
+        /// php版本
+        /// </summary>
+        public string phpVersion = "";
+
+        public string NginxRoot = "";
+        public string MysqlRoot = "";
+        public string PHPRoot = "";
+
+        /// <summary>
+        /// 检查域名
+        /// </summary>
+        /// <param name="domainNameInput">域名</param>
+        /// <returns>bool</returns>
+
+        public AppConf()
+        {
+            load();
+            NginxRoot = "wnmp/nginx/" + nginxVersion + "/";
+            MysqlRoot = "wnmp/mysql/" + mysqlVersion + "/";
+            PHPRoot = "wnmp/php/" + phpVersion + "/";
+        }
+        private void load()
+        {
+            string path = Site.GetRootPath() + "/wnmp.ini";
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("主程序配置文件未找到！","错误");
+                return;
+            }
+            try
+            {
+                StreamReader sr = new StreamReader(path);
+                while (!sr.EndOfStream)
+                {
+                    string str = sr.ReadLine();
+                    if (str.IndexOf("#") == 0 || str.Trim() == "")
+                    {
+                        
+                        continue;
+                    }
+                    //软件名称
+                    if (str.IndexOf("appName") != -1)
+                    {
+                        appName = str.Replace("appName=", "").Trim();
+                    }
+                    //软件服务器地址
+                    if (str.IndexOf("appHost") != -1)
+                    {
+                        appHost = str.Replace("appHost=", "").Trim();
+                    }
+                    //软件版本
+                    if (str.IndexOf("appVersion") != -1)
+                    {
+                        appVersion = str.Replace("appVersion=", "").Trim();
+                    }
+                    //更新设置
+                    if (str.IndexOf("autoUpdate") != -1)
+                    {
+                        autoUpdate = str.Replace("autoUpdate=", "").Trim();
+                    }
+                    //退出类型
+                    if (str.IndexOf("quitType") != -1)
+                    {
+                        quitType = str.Replace("quitType=", "").Trim();
+                    }
+                    //nginx版本
+                    if (str.IndexOf("nginxVersion") != -1)
+                    {
+                        nginxVersion = str.Replace("nginxVersion=", "").Trim();
+                    }
+                    //mysql版本
+                    if (str.IndexOf("mysqlVersion") != -1)
+                    {
+                        mysqlVersion = str.Replace("mysqlVersion=", "").Trim();
+                    }
+                    //php版本
+                    if (str.IndexOf("phpVersion") != -1)
+                    {
+                        phpVersion = str.Replace("phpVersion=", "").Trim();
+                    }
+
+                }
+                sr.Close();
+            }
+            catch
+            {
+                MessageBox.Show("主程序配置读取失败！", "错误");
+            }
+            
+        }
+
+        public bool Save()
+        {
+            string path = Site.GetRootPath() + "/wnmp.ini";
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+            try
+            {
+                StreamWriter sw = new StreamWriter(path);
+                sw.WriteLine("#wnmp");
+                sw.WriteLine("appName="+appName);
+                sw.WriteLine("appHost=" + appHost);
+                sw.WriteLine("autoUpdate=" + autoUpdate);
+                sw.WriteLine("quitType=" + quitType + "\n");
+                sw.WriteLine("#nginx");
+                sw.WriteLine("nginxVersion=" + nginxVersion+"\n");
+                sw.WriteLine("#mysql");
+                sw.WriteLine("mysqlVersion=" + mysqlVersion + "\n");
+                sw.WriteLine("#php");
+                sw.WriteLine("phpVersion=" + phpVersion);
+                sw.Flush();
+                sw.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 检查版本
+        /// </summary>
+        /// <returns>是否需要更新</returns>
+        public bool checkNewVersion(string v)
+        {
+            if (autoUpdate == "0")
+            {
+                return false;
+            }
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(appHost+"/app.json");
+            req.Method = "GET";
+            try
+            {
+                using HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+                load();
+                StreamReader sr = new StreamReader(res.GetResponseStream());
+                string jsonText = sr.ReadToEnd();
+                sr.Close();
+                JObject jo = (JObject)JsonConvert.DeserializeObject(jsonText);
+                string version = jo["version"].ToString();
+                bool yes = Version.Parse(version) > Version.Parse(appVersion);
+                if (yes)
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                //MessageBox.Show("检查更新失败", "错误");
+            }
+            return false;
+
+        }
+    }
+}
