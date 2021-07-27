@@ -60,6 +60,7 @@ namespace wnmp.tools
             if (!File.Exists(path))
             {
                 MessageBox.Show("主程序配置文件未找到！","错误");
+                Environment.Exit(0);
                 return;
             }
             try
