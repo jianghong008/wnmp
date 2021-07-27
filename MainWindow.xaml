@@ -99,7 +99,7 @@
                                     <ComboBox x:Name="phpVersionSelect" Height="21" Width="84" Canvas.Left="95.2" Canvas.Top="41.665" SelectionChanged="phpVersionSelect_SelectionChanged"/>
                                     <Label Height="24" Width="68" Canvas.Left="10.4" Canvas.Top="71.135" Content="Mysql版本"/>
                                     <ComboBox x:Name="mysqlVersionSelect" Height="21" Width="84" Canvas.Left="95.2" Canvas.Top="72.735" SelectionChanged="mysqlVersionSelect_SelectionChanged"/>
-                                    <Label x:Name="refreshWebSIteBtn_Copy" Style="{StaticResource defautBtnLable}" Content="更多版本" Height="24" Canvas.Left="517" Canvas.Top="4.8" Width="58" MouseLeftButtonUp="refreshWebSIteBtn_Copy_MouseLeftButtonUp" Visibility="Hidden"/>
+                                    <Label x:Name="appManager" Style="{StaticResource defautBtnLable}" Content="应用管理" Height="24" Canvas.Left="517" Canvas.Top="4.8" Width="58" MouseLeftButtonUp="refreshWebSIteBtn_Copy_MouseLeftButtonUp" Visibility="Visible"/>
                                 </Canvas>
                             </GroupBox>
 

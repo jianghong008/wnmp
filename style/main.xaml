@@ -70,7 +70,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
-                    <Grid Margin="10">
+                    <Grid Margin="8">
                         <!--x:Static 引用中定义的任何静态的值的代码实体公共语言规范 (CLS)– 合规的方式。 引用的静态属性可以用于提供在 XAML 中属性的值
                               SystemColors 定义的所需的静态成员的类型的名称。
                               WindowBrushKey 使用WindowBrushKey创建对用于绘制窗口的客户端区域背景的画笔的动态引用。 如果更改画笔，将自动更新此动态引用。 若要创建的静态引用，不会自动更新，请使用WindowBrush。-->
