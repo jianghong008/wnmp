@@ -42,7 +42,7 @@
                             <Ellipse x:Name="mysqlStatusImg" Height="20" Canvas.Left="14.309" Canvas.Top="108" Width="20" Fill="#FFC80000"/>
                             <Label x:Name="mysqlVersionLabel" Content="mysql-5.7.26" Height="25" Canvas.Left="56.109" Canvas.Top="150.4" Width="102" ToolTip="双击查看配置" MouseDoubleClick="Label_MouseLeftButtonDown"/>
                         </Canvas>
-                        <ScrollViewer x:Name="logboxwarp" VerticalScrollBarVisibility="Hidden" Margin="0,238,41,56" Grid.Column="1" Grid.ColumnSpan="2">
+                        <ScrollViewer x:Name="logboxwarp" VerticalScrollBarVisibility="Hidden" Margin="0,238,32,56" Grid.Column="1" Grid.ColumnSpan="2">
                             <TextBlock x:Name="logBox" Grid.Column="1" TextWrapping="Wrap" Background="#FFEAEAEA" Padding="5,5,5,5" Text="">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu/>
@@ -60,7 +60,6 @@
                             <Ellipse x:Name="phpStatusImg" Height="20" Canvas.Left="13.509" Canvas.Top="108" Width="20" Fill="#FFC80000"/>
                             <Label x:Name="phpVersionLabel" Content="php7.3.4" Height="27" Canvas.Left="68.709" Canvas.Top="144.1" Width="88" ToolTip="双击查看配置" MouseDoubleClick="Label_MouseLeftButtonDown_1"/>
                         </Canvas>
-                        <Label x:Name="versionBox" Content="wnmp1.0.0" Grid.Column="2" HorizontalAlignment="Left" Height="25" Margin="486,350,0,0" VerticalAlignment="Top" Width="75" ToolTip="查看更新" Foreground="#FF1430F9" Cursor="Hand" MouseDown="Label_MouseDown"/>
 
                     </Grid>
                 </TabItem>
