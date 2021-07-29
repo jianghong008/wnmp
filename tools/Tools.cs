@@ -114,7 +114,30 @@ namespace wnmp.tools
                     path = "C:/Windows/System32/drivers/etc/hosts";
                     break;
             }
-            Process.Start("notepad.exe", path);
+            try
+            {
+                _ = Process.Start("notepad.exe", path);
+            }
+            catch
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// 打开文本
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void OpenText(string fileName)
+        {
+            try
+            {
+                _ = Process.Start("notepad.exe", fileName);
+            }
+            catch
+            {
+
+            }
         }
         /// <summary>
         /// 管理nginx
@@ -126,7 +149,7 @@ namespace wnmp.tools
             string path = Site.GetRootPath()+NginxRoot + "/nginx.exe";
             if (!File.Exists(path))
             {
-                MessageBox.Show("Nginx未找到", "错误");
+                _ = MessageBox.Show("Nginx未找到", "错误");
                 return;
             }
             ProcessStartInfo info = new ProcessStartInfo();
@@ -321,7 +344,6 @@ namespace wnmp.tools
             p.Close();
             Console.WriteLine(p);
         }
-
         /// <summary>
         /// 检查Mysql配置并自动修复
         /// </summary>
@@ -329,11 +351,11 @@ namespace wnmp.tools
         {
             loadPath();
             string ini = Site.GetRootPath() + MysqlRoot;
-            string path = ini + "defaultIni";
+            string path = ini + "my.ini";
             if (File.Exists(path))
             {
                 //如果存在则检查工作目录
-                
+
                 try
                 {
                     StreamReader sr = new StreamReader(path);
@@ -344,12 +366,12 @@ namespace wnmp.tools
                     {
                         File.Delete(ini + "my.ini");
                     }
-                    
-                    ini = ini.Replace(@"\",@"/");
+
+                    ini = ini.Replace(@"\", @"/");
                     //工作目录
-                    txt = Regex.Replace(txt, "basedir=.+", "basedir=" + ini);
+                    txt = Regex.Replace(txt, "basedir=.+", "basedir = \"" + ini+"\"");
                     //数据目录
-                    txt = Regex.Replace(txt, "datadir=.+", "datadir=" + ini + "data/");
+                    txt = Regex.Replace(txt, "datadir=.+", "datadir = \"" + ini + "data/\"");
                     //写入
                     StreamWriter sw = new StreamWriter(ini + "my.ini");
                     sw.Write(txt);
@@ -365,7 +387,54 @@ namespace wnmp.tools
             }
             else
             {
-                MessageBox.Show("未找到defaultIni文件！","错误");
+                MessageBox.Show(path+"不存在！", "错误");
+            }
+
+        }
+        /// <summary>
+        /// 检查php配置并自动修复
+        /// </summary>
+        public void CheckPhpINI()
+        {
+            loadPath();
+            string ini = Site.GetRootPath() + PHPRoot;
+            string path = ini + "php.ini";
+            if (File.Exists(path))
+            {
+                //如果存在则检查工作目录
+                
+                try
+                {
+                    StreamReader sr = new StreamReader(path);
+                    string txt = sr.ReadToEnd();
+                    sr.Close();
+                    //删除老配置
+                    if (File.Exists(ini + "php.ini"))
+                    {
+                        File.Delete(ini + "php.ini");
+                    }
+                    
+                    ini = ini.Replace(@"\",@"/");
+                    //扩展目录
+                    txt = Regex.Replace(txt, "extension_dir.+", "extension_dir = \"" + ini+"ext\"");
+                    //数据目录
+                    txt = Regex.Replace(txt, "session.save_path=.+", "session.save_path = \"" + ini + "tmp/tmp\"");
+                    //写入
+                    StreamWriter sw = new StreamWriter(ini + "php.ini");
+                    sw.Write(txt);
+                    sw.Flush();
+                    sw.Close();
+                    Console.WriteLine(txt);
+                }
+                catch
+                {
+                    MessageBox.Show("初始化PHP失败！", "错误");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show(path+"不存在！","错误");
             }
 
         }

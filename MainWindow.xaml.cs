@@ -28,6 +28,10 @@ namespace wnmp
         private int CheckTime = 5*1000;//监控间隔时间
         private bool UIisLoaded = false;//加载完成
 
+        private bool NginxUserRunning = false;//用户启动Nginx
+        private bool MysqlUserRunning = false;//用户启动mysql
+        private bool PhpUserRunning = false;//用户启动php
+        
         private System.Windows.Forms.NotifyIcon TrayIcon;
         //主程序配置
         private AppConf appConf;
@@ -76,6 +80,10 @@ namespace wnmp
                     loadList(false);
                     //加载完成
                     UIisLoaded = true;
+                    //检测Mysql配置
+                    tool.CheckMysqlINI();
+                    //检测php配置
+                    tool.CheckPhpINI();
                 }));
             }).Start();
             //nginx 监控
@@ -94,8 +102,6 @@ namespace wnmp
             logClean.MouseDown += logClean_MouseDown;
             logBox.ContextMenu.Items.Add(logClean);
 
-            //检测Mysql配置
-            tool.CheckMysqlINI();
         }
         /// <summary>
         /// 初始化UI
@@ -103,7 +109,7 @@ namespace wnmp
         private void initUI(bool loadList=true)
         {
             Title = appConf.appName + "集成管理";
-            versionBox.Content = appConf.appName + appConf.appVersion;
+            windowsTitle.Text = Title +" "+ appConf.appVersion;
             phpVersionLabel.Content = "PHP " + appConf.phpVersion;
             mysqlVersionLabel.Content = "Mysql " + appConf.mysqlVersion;
             nginxVersionLabel.Content = "Nginx " + appConf.nginxVersion;
@@ -153,6 +159,10 @@ namespace wnmp
                     phpVersionSelect.SelectedIndex = i;
                 }
             }
+            //检测Mysql配置
+            tool.CheckMysqlINI();
+            //检测php配置
+            tool.CheckPhpINI();
         }
         /// <summary>
         /// 更新版本
@@ -224,7 +234,7 @@ namespace wnmp
                 SiteList = (new Site(appConf)).GetSiteList();
                 siteListBox.Items.Clear();
             }
-            foreach (var item in SiteList)
+            foreach (SiteConf item in SiteList)
             {
                 Canvas c = new Canvas();
                 c.Width = 588;
@@ -392,6 +402,11 @@ namespace wnmp
             }).Start();
         }
 
+        /// <summary>
+        /// 启动nginx
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nginxRunBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //防重复点击
@@ -409,6 +424,7 @@ namespace wnmp
             var str = btn.Text;
             if(str=="启 动")
             {
+                NginxUserRunning = true;
                 Log("启动Nginx...");
                 tool.CmdNginx("start");
                 btn.Text = "停 止";
@@ -416,7 +432,11 @@ namespace wnmp
             }
             else
             {
-                
+                NginxUserRunning = false;
+                if (NginxStopping)
+                {
+                    return;
+                }
                 NginxStopping = true;
                 Log("正在停止Nginx...");
                 try
@@ -449,13 +469,23 @@ namespace wnmp
                     {
                         Dispatcher.Invoke(new Action(() => {
                             nginxRunBtn.Text = "停 止";
-
                             nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                            if (NginxStopping)
+                            {
+                                NginxStopping = false;
+                                Log("Nginx停止失败");
+                            }
                         }));
                         
                     }
                     else
                     {
+                        if (NginxUserRunning)
+                        {
+                            //如果用户启动，则守护该进程
+                            Log("Nginx意外停止，正在重启...");
+                            tool.CmdNginx("start");
+                        }
                         Dispatcher.Invoke(new Action(() => {
                             if (NginxStopping)
                             {
@@ -535,13 +565,23 @@ namespace wnmp
                     {
                         Dispatcher.Invoke(new Action(() => {
                             mysqlRunBtn.Text = "停 止";
-
                             mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                            if (MysqlStopping)
+                            {
+                                MysqlStopping = false;
+                                Log("Msql停止失败");
+                            }
                         }));
 
                     }
                     else
                     {
+                        if (MysqlUserRunning)
+                        {
+                            //如果用户启动，则守护该进程
+                            Log("Mysql意外停止，正在重启...");
+                            tool.CmdMysql("start");
+                        }
                         Dispatcher.Invoke(new Action(() => {
                             if (MysqlStopping)
                             {
@@ -559,6 +599,11 @@ namespace wnmp
             }).Start();
         }
 
+        /// <summary>
+        /// 启动MySQL
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void mysqlRunBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //防重复点击
@@ -576,6 +621,7 @@ namespace wnmp
             var str = btn.Text;
             if (str == "启 动")
             {
+                MysqlUserRunning = true;
                 Log("启动Mysql...");
                 tool.CmdMysql("start");
                 btn.Text = "停 止";
@@ -583,8 +629,13 @@ namespace wnmp
             }
             else
             {
-
+                MysqlUserRunning = false;
+                if (MysqlStopping)
+                {
+                    return;
+                }
                 MysqlStopping = true;
+                
                 try
                 {
                     Log("正在停止Mysql...");
@@ -637,18 +688,24 @@ namespace wnmp
         /// <param name="txt"></param>
         public void Log(string txt)
         {
-            if (logBox.Text != "")
-            {
-                logBox.Text += "\r" + DateTime.Now.ToString() + " ：" + txt;
-                logboxwarp.ScrollToEnd();
-            }
-            else
-            {
-                logBox.Text += DateTime.Now.ToString() + " ：" + txt;
-            }
-            
+            Dispatcher.Invoke(new Action(() => {
+                if (logBox.Text != "")
+                {
+                    logBox.Text += "\r" + DateTime.Now.ToString() + " ：" + txt;
+                    logboxwarp.ScrollToEnd();
+                }
+                else
+                {
+                    logBox.Text += DateTime.Now.ToString() + " ：" + txt;
+                }
+            }));   
         }
 
+        /// <summary>
+        /// 启动php
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void phpRunBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //防重复点击
@@ -661,26 +718,31 @@ namespace wnmp
             {
                 LastClickTime = time;
             }
+            
             //控制PHP
             var btn = (TextBlock)sender;
             var str = btn.Text;
             if (str == "启 动")
             {
+                PhpUserRunning = true;
                 Log("启动PHP...");
                 tool.CmdPHP("start");
                 btn.Text = "停 止";
                 phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                Trace.WriteLine(0);
             }
             else
             {
+                PhpUserRunning = false;
                 if (PHPStopping)
                 {
                     return;
                 }
-                PHPStopping = true;
+                
                 try
                 {
                     Log("正在停止PHP...");
+                    PHPStopping = true;
                     tool.CmdPHP("stop");
                     btn.Text = "启 动";
                     phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
@@ -708,13 +770,23 @@ namespace wnmp
                     {
                         Dispatcher.Invoke(new Action(() => {
                             phpRunBtn.Text = "停 止";
-
                             phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                            if (PHPStopping)
+                            {
+                                PHPStopping = false;
+                                Log("PHP停止失败");
+                            }
                         }));
 
                     }
                     else
                     {
+                        if (PhpUserRunning)
+                        {
+                            //如果用户启动，则守护该进程
+                            Log("PHP意外停止，正在重启...");
+                            tool.CmdPHP("start");
+                        }
                         Dispatcher.Invoke(new Action(() => {
                             if (PHPStopping)
                             {
@@ -958,7 +1030,8 @@ namespace wnmp
             //打开软件下载界面
             if (DownloadPage == null)
             {
-                DownloadPage = new download();
+                DownloadPage = new download(tool,appConf);
+                DownloadPage.Show();
             }
             else
             {
@@ -969,11 +1042,12 @@ namespace wnmp
                 }
                 catch
                 {
-                    DownloadPage = new download();
+                    DownloadPage = null;
+                    DownloadPage = new download(tool,appConf);
+                    DownloadPage.Show();
                 }
                 
             }
-            DownloadPage.WindowState = WindowState.Normal;
 
         }
     }

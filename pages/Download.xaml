@@ -5,31 +5,52 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wnmp.pages"
         mc:Ignorable="d"
-        Title="应用管理" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="应用管理" Height="450" Width="669" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="37*"/>
-            <ColumnDefinition Width="763*"/>
+            <ColumnDefinition Width="31*"/>
+            <ColumnDefinition Width="565*"/>
+            <ColumnDefinition Width="73*"/>
         </Grid.ColumnDefinitions>
-        <TabControl Grid.ColumnSpan="2">
+        <TabControl Grid.ColumnSpan="3" Margin="0,31,0,0">
             <TabItem Header="PHP" Style="{StaticResource TabItemLineStyle}">
                 <Grid Background="#FFE5E5E5">
-                    <ScrollViewer>
-                        <ListBox x:Name="appListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended">
-                            <Canvas Height="50" Width="758">
-                                <Label Content="php 8.0" Height="31" Canvas.Left="9.8" Width="198" Canvas.Top="9.92"/>
-                                <Label x:Name="installBtn" Style="{StaticResource defautBtnLable}" Content="安装" Height="28" Width="35" Canvas.Left="566.5" Canvas.Top="15.18"/>
-                            </Canvas>
-                        </ListBox>
-                    </ScrollViewer>
+                    <Canvas Margin="0,0,0,20">
+                        <ScrollViewer Height="378" Width="663" Canvas.Left="0.1">
+                            <ScrollViewer.FocusVisualStyle>
+                                <Style/>
+                            </ScrollViewer.FocusVisualStyle>
+                            <ListBox x:Name="phpListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended" Height="377"/>
+                        </ScrollViewer>
+                    </Canvas>
                 </Grid>
             </TabItem>
             <TabItem Header="Nginx" Style="{StaticResource TabItemLineStyle}">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <Canvas Margin="0,0,0,20">
+                        <ScrollViewer Height="378" Width="663" Canvas.Left="0.1">
+                            <ScrollViewer.FocusVisualStyle>
+                                <Style/>
+                            </ScrollViewer.FocusVisualStyle>
+                            <ListBox x:Name="nginxListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended" Height="377"/>
+                        </ScrollViewer>
+                    </Canvas>
+                </Grid>
             </TabItem>
             <TabItem Header="Mysql" Style="{StaticResource TabItemLineStyle}">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <Canvas Margin="0,0,0,20">
+                        <ScrollViewer Height="378" Width="663" Canvas.Left="0.1">
+                            <ScrollViewer.FocusVisualStyle>
+                                <Style/>
+                            </ScrollViewer.FocusVisualStyle>
+                            <ListBox x:Name="mysqlListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended" Height="377"/>
+                        </ScrollViewer>
+                    </Canvas>
+                </Grid>
             </TabItem>
         </TabControl>
+        <TextBlock HorizontalAlignment="Left" Height="19" Margin="286,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="319" Grid.Column="1" Foreground="#FFD43131" Grid.ColumnSpan="2"><Run Text="将"/><Run Text="官网下载的"/><Run Text="文件放置"/><Run Text=" "/><Run Language="zh-cn" Text="&quot;"/><Run Text="安装目录"/><Run Text="/"/><Run Text="wnmp"/><Run Text="/"/><Run Text="对应目录"/><Run Language="zh-cn" Text="&quot;"/><Run Text=" 即可"/><Run Text="！"/><LineBreak/><Run/></TextBlock>
+        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="19" Margin="10,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="302"><Run Text="此工具不提供下载，如需要安装其它版本，请移步官网！"/><LineBreak/><Run/></TextBlock>
     </Grid>
 </Window>
