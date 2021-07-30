@@ -67,9 +67,9 @@
                     <Grid>
                         <Canvas Margin="3,10,17,20">
                             <Label x:Name="addWebSIteBtn" Style="{StaticResource defautBtnLable}" Content="创建网站" Height="24" Canvas.Left="7.109" Canvas.Top="12" Width="60" MouseDown="addWebSIteBtn_MouseDown"/>
-                            <ScrollViewer Height="290" Canvas.Left="-0.091" Canvas.Top="66.4" Width="604" VerticalScrollBarVisibility="Auto">
-                                <ListBox x:Name="siteListBox">
-                                    <Label Content="加载中..." Height="263" Width="581" FontSize="22" ScrollViewer.CanContentScroll="True" Padding="247,106,5,5" IsEnabled="False"/>
+                            <ScrollViewer Height="290" Canvas.Top="66" Width="619" VerticalScrollBarVisibility="Auto">
+                                <ListBox x:Name="siteListBox" Width="616">
+                                    <Label Content="加载中..." Height="263" Width="589" FontSize="22" ScrollViewer.CanContentScroll="True" Padding="247,106,5,5" IsEnabled="False"/>
                                 </ListBox>
                             </ScrollViewer>
                             <Label Content="域名" Height="25" Canvas.Left="36.809" Canvas.Top="40.8" Width="47"/>
