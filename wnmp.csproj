@@ -15,6 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="updata\**" />
+    <EmbeddedResource Remove="updata\**" />
+    <None Remove="updata\**" />
+    <Page Remove="updata\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="mysql.jpg" />
     <None Remove="mysql.png" />

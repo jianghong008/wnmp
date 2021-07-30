@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using wnmp.tools;
 
 namespace wnmp.pages
@@ -22,11 +15,13 @@ namespace wnmp.pages
     {
         Tools tool;
         AppConf conf;
-        public download(Tools t, AppConf c)
+        MainWindow win;
+        public download(Tools t, AppConf c, MainWindow mw)
         {
             InitializeComponent();
             tool = t;
             conf = c;
+            win = mw;
             loadList();
         }
 
@@ -50,6 +45,7 @@ namespace wnmp.pages
                 l.Margin = new Thickness(0, 12, 0, 0);
                 l.Width = 350;
                 l.MouseDoubleClick += L_MouseDoubleClick;
+                l.ToolTip = "双击打开所在位置";
                 l.DataContext = "wnmp/php/" + tool.phpVersions[i];
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
@@ -85,6 +81,7 @@ namespace wnmp.pages
                 l.Width = 350;
                 l.MouseDoubleClick += L_MouseDoubleClick;
                 l.DataContext = "wnmp/mysql/" + tool.mysqlVersions[i];
+                l.ToolTip = "双击打开所在位置";
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
                 iniBtn.Width = 35;
@@ -118,6 +115,7 @@ namespace wnmp.pages
                 l.Margin = new Thickness(0, 12, 0, 0);
                 l.Width = 350;
                 l.MouseDoubleClick += L_MouseDoubleClick;
+                l.ToolTip = "双击打开所在位置";
                 l.DataContext = "wnmp/nginx/" + tool.nginxVersions[i];
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
@@ -168,19 +166,31 @@ namespace wnmp.pages
         }
         private void RmBtn_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            //移除移除
+            //不可移除当前使用的，且必须保留一个版本
+            Label btn = (Label)sender;
+            string path = tool.RootPath + btn.DataContext.ToString();
+            if (path.IndexOf(conf.phpVersion) >= 0 || path.IndexOf(conf.mysqlVersion) >= 0 || path.IndexOf(conf.nginxVersion) >= 0)
+            {
+                _ = MessageBox.Show("该版本正在使用，不可移除！", "提示");
+                return;
+            }
+            
+            //移除应用
             MessageBoxResult mbr = MessageBox.Show("是否删除该版本？此操作不可逆！", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (mbr == MessageBoxResult.Yes)
             {
-                Label btn = (Label)sender;
-                string path = tool.RootPath + btn.DataContext.ToString();
                 if (Directory.Exists(path))
                 {
                     try
                     {
                         DirectoryInfo di = new DirectoryInfo(path);
                         di.Delete(true);
-                        loadList();
+                        Dispatcher.Invoke(() =>
+                        {
+                            win.LoadApps();
+                            loadList();
+                        });
+                        
                     }
                     catch(Exception err)
                     {
