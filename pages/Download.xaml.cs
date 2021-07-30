@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,6 +35,10 @@ namespace wnmp.pages
         /// </summary>
         private void loadList()
         {
+            //先清空
+            phpListBox.Items.Clear();
+            mysqlListBox.Items.Clear();
+            nginxListBox.Items.Clear();
             //php
             for (int i = 0; i < tool.phpVersions.Length; i++)
             {
@@ -44,7 +49,7 @@ namespace wnmp.pages
                 l.Content = "PHP " + tool.phpVersions[i];
                 l.Margin = new Thickness(0, 12, 0, 0);
                 l.Width = 350;
-                //l.MouseDoubleClick += L_MouseDoubleClick;
+                l.MouseDoubleClick += L_MouseDoubleClick;
                 l.DataContext = "wnmp/php/" + tool.phpVersions[i];
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
@@ -78,7 +83,7 @@ namespace wnmp.pages
                 l.Content = "Mysql " + tool.mysqlVersions[i];
                 l.Margin = new Thickness(0, 12, 0, 0);
                 l.Width = 350;
-                //l.MouseDoubleClick += L_MouseDoubleClick;
+                l.MouseDoubleClick += L_MouseDoubleClick;
                 l.DataContext = "wnmp/mysql/" + tool.mysqlVersions[i];
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
@@ -112,7 +117,7 @@ namespace wnmp.pages
                 l.Content = "Nginx " + tool.nginxVersions[i];
                 l.Margin = new Thickness(0, 12, 0, 0);
                 l.Width = 350;
-                //l.MouseDoubleClick += L_MouseDoubleClick;
+                l.MouseDoubleClick += L_MouseDoubleClick;
                 l.DataContext = "wnmp/nginx/" + tool.nginxVersions[i];
                 Label iniBtn = new Label();
                 iniBtn.Content = "配置";
@@ -153,8 +158,8 @@ namespace wnmp.pages
         {
             try
             {
-                Trace.WriteLine(path.Replace(@"\","/"));
-                _ = Process.Start("explorer.exe", path.Replace(@"\", "/"));
+                Trace.WriteLine(path.Replace("/",@"\"));
+                _ = Process.Start("explorer.exe", path.Replace("/", @"\"));
             }
             catch
             {
@@ -164,7 +169,30 @@ namespace wnmp.pages
         private void RmBtn_MouseUp(object sender, MouseButtonEventArgs e)
         {
             //移除移除
-
+            MessageBoxResult mbr = MessageBox.Show("是否删除该版本？此操作不可逆！", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (mbr == MessageBoxResult.Yes)
+            {
+                Label btn = (Label)sender;
+                string path = tool.RootPath + btn.DataContext.ToString();
+                if (Directory.Exists(path))
+                {
+                    try
+                    {
+                        DirectoryInfo di = new DirectoryInfo(path);
+                        di.Delete(true);
+                        loadList();
+                    }
+                    catch(Exception err)
+                    {
+                        Trace.WriteLine(err);
+                        _ = MessageBox.Show("删除失败，请稍后重试！");
+                    }           }
+                else
+                {
+                    _ = MessageBox.Show("删除失败，应用不存在！");
+                }
+                
+            }
         }
 
         private void IniBtn_MouseUp(object sender, MouseButtonEventArgs e)
