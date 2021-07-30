@@ -106,7 +106,7 @@ namespace wnmp
         /// <summary>
         /// 初始化UI
         /// </summary>
-        private void initUI(bool loadList=true)
+        public void initUI(bool loadList=true)
         {
             Title = appConf.appName + "集成管理";
             windowsTitle.Text = Title +" "+ appConf.appVersion;
@@ -134,6 +134,18 @@ namespace wnmp
                 return;
             }
             //获取可以软件版本
+            LoadApps();
+            //检测Mysql配置
+            tool.CheckMysqlINI();
+            //检测php配置
+            tool.CheckPhpINI();
+        }
+        /// <summary>
+        /// 加载可用版本
+        /// </summary>
+        public void LoadApps()
+        {
+            nginxVersionSelect.Items.Clear();
             tool.getWnmpVersions();
             for (int i = 0; i < tool.nginxVersions.Length; i++)
             {
@@ -141,8 +153,9 @@ namespace wnmp
                 if (tool.nginxVersions[i] == appConf.nginxVersion)
                 {
                     nginxVersionSelect.SelectedIndex = i;
-                }   
+                }
             }
+            mysqlVersionSelect.Items.Clear();
             for (int i = 0; i < tool.mysqlVersions.Length; i++)
             {
                 mysqlVersionSelect.Items.Add(tool.mysqlVersions[i]);
@@ -151,6 +164,7 @@ namespace wnmp
                     mysqlVersionSelect.SelectedIndex = i;
                 }
             }
+            phpVersionSelect.Items.Clear();
             for (int i = 0; i < tool.phpVersions.Length; i++)
             {
                 phpVersionSelect.Items.Add(tool.phpVersions[i]);
@@ -159,10 +173,6 @@ namespace wnmp
                     phpVersionSelect.SelectedIndex = i;
                 }
             }
-            //检测Mysql配置
-            tool.CheckMysqlINI();
-            //检测php配置
-            tool.CheckPhpINI();
         }
         /// <summary>
         /// 更新版本
@@ -1030,7 +1040,7 @@ namespace wnmp
             //打开软件下载界面
             if (DownloadPage == null)
             {
-                DownloadPage = new download(tool,appConf);
+                DownloadPage = new download(tool,appConf,this);
                 DownloadPage.Show();
             }
             else
@@ -1043,7 +1053,7 @@ namespace wnmp
                 catch
                 {
                     DownloadPage = null;
-                    DownloadPage = new download(tool,appConf);
+                    DownloadPage = new download(tool,appConf,this);
                     DownloadPage.Show();
                 }
                 
