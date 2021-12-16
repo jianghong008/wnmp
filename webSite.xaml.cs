@@ -34,10 +34,12 @@ namespace wnmp
             if (sc.IsNew)
             {
                 removeWebSite.Visibility = Visibility.Hidden;
+                site_conf_btn.Visibility = Visibility.Hidden;
             }
             else
             {
                 removeWebSite.Visibility = Visibility.Visible;
+                site_conf_btn.Visibility = Visibility.Visible;
             }
             //Site.EditHost("www.test.xyz", null,false);
         }
