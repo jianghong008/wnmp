@@ -12,6 +12,7 @@
 	<PackageReleaseNotes>wnmp环境集成，简单方便。</PackageReleaseNotes>
 	<NeutralLanguage>zh-CN</NeutralLanguage>
 	<PackageIcon>logo.png</PackageIcon>
+	<PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>

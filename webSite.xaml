@@ -41,7 +41,7 @@
                         <Label Content="网站跨域：" Height="26" Width="61" Canvas.Top="44.193" Canvas.Left="2"/>
                         <CheckBox x:Name="hostBox" Content="开启" Width="68" Height="20" Canvas.Left="74" Canvas.Top="76.193" IsChecked="True"/>
                         <Label Content="查看Hosts" Height="24" Canvas.Left="140" Canvas.Top="71" Width="67" Foreground="#FF021FBA" Cursor="Hand" MouseUp="Label_MouseUp"/>
-                        <Label Content="查看conf" Height="24" Canvas.Left="207" Canvas.Top="71" Width="67" Foreground="#FF021FBA" Cursor="Hand" MouseUp="Label_MouseUp_1"/>
+                        <Label x:Name="site_conf_btn" Content="查看conf" Height="24" Canvas.Left="207" Canvas.Top="71" Width="67" Foreground="#FF021FBA" Cursor="Hand" MouseUp="Label_MouseUp_1"/>
                     </Canvas>
                 </GroupBox>
             </Canvas>
