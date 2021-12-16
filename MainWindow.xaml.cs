@@ -540,8 +540,18 @@ namespace wnmp
         private void show_windows(object sender, EventArgs e)
         {
             //从任务栏重新显示界面
-            Show();
-            _ = Activate();
+            try
+            {
+                Show();
+                WindowState = WindowState.Normal;
+                _ = Activate();
+                Top = SystemParameters.WorkArea.Height / 2 - Height / 2;
+                Left = SystemParameters.WorkArea.Width / 2 - Width / 2;
+            }
+            catch
+            {
+                MessageBox.Show("窗口显示错误！");
+            }
             
         }
         private void close_windows(object sender, EventArgs e)
