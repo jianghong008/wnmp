@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wnmp"
         mc:Ignorable="d"
-        Title="网站管理" Height="450" Width="800" WindowStyle="ToolWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="网站管理" Height="450" Width="800" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <GroupBox Header="常规设置" Margin="19,12,405,47">
             <Canvas Margin="0,0,-2,-3">
