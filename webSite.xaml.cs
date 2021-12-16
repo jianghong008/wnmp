@@ -5,6 +5,7 @@ using System.Windows.Input;
 using wnmp.tools;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace wnmp
 {
@@ -180,6 +181,18 @@ namespace wnmp
             //查看Host配置
             
             (new Tools(appConf)).OpenConf("hosts");
+        }
+
+        private void Label_MouseUp_1(object sender, MouseButtonEventArgs e)
+        {
+            string conf_name = conf.domainName.Split(" ")[0];
+            string confPath = Site.GetRootPath() + appConf.NginxRoot + "conf/vhosts/" + conf_name + ".conf";
+            if (File.Exists(confPath))
+            {
+                Tools t = new Tools(appConf);
+                t.OpenText(confPath);
+            }
+            
         }
     }
 }
