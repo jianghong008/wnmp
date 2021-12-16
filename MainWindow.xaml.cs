@@ -94,12 +94,9 @@ namespace wnmp
             checkPHP();
             //日志菜单
             logBox.ContextMenu = new ContextMenu();
-            Label logClean = new Label()
-            {
-                Content = "清除日志",
-
-            };
-            logClean.MouseDown += logClean_MouseDown;
+            MenuItem logClean = new MenuItem();
+            logClean.Header = "清除日志";
+            logClean.Click += logClean_click;
             logBox.ContextMenu.Items.Add(logClean);
 
         }
@@ -180,7 +177,7 @@ namespace wnmp
 
             }
         }
-        private void logClean_MouseDown(object sender, MouseButtonEventArgs e)
+        private void logClean_click(object sender, RoutedEventArgs e)
         {
             //清除日志
             logBox.Text = "";
@@ -533,7 +530,9 @@ namespace wnmp
         private void show_windows(object sender, EventArgs e)
         {
             //从任务栏重新显示界面
-            this.Show();
+            Show();
+            _ = Activate();
+            
         }
         private void close_windows(object sender, EventArgs e)
         {
@@ -900,8 +899,11 @@ namespace wnmp
                     TrayIcon.ShowBalloonTip(1000);
 
                     TrayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+                    TrayIcon.ContextMenuStrip.Items.Add("显示窗口");
                     TrayIcon.ContextMenuStrip.Items.Add("退出程序");
-                    TrayIcon.ContextMenuStrip.MouseClick += close_windows;
+
+                    TrayIcon.ContextMenuStrip.Items[0].Click += show_windows;
+                    TrayIcon.ContextMenuStrip.Items[1].Click += close_windows;
                 }
                 TrayIcon.Visible = true;
             }
