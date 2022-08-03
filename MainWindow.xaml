@@ -8,10 +8,9 @@
         Title="wnmp管理" Height="464" Width="654" WindowStyle="None" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Closing="Window_Closing" AllowsTransparency="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="9*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Canvas Margin="0,-2,0,0" Grid.ColumnSpan="2">
+        <Canvas Margin="0,-2,0,0">
             <TabControl IsSynchronizedWithCurrentItem="True" Canvas.Top="26" Height="409" Width="625" Padding="2,2,0,0" BorderThickness="0,0,0,0">
                 <TabItem Header="管理" Style="{StaticResource TabItemLineStyle}">
                     <Grid>
@@ -21,25 +20,25 @@
                             <ColumnDefinition Width="583*"/>
                         </Grid.ColumnDefinitions>
                         <Canvas x:Name="nginxBox" Grid.ColumnSpan="3" Margin="6,37,439,175">
-                            <TextBlock Style="{StaticResource defautBtn}" x:Name="nginxRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="31.109" Canvas.Top="103.4" MouseDown="nginxRunBtn_MouseDown" Text="启 动"/>
+                            <TextBlock Style="{StaticResource defautBtn}" x:Name="nginxRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="31.109" Canvas.Top="103.4" MouseDown="nginxRunBtn_MouseDown" Text="{Binding NginxBtn}"/>
                             <TextBlock x:Name="nginxRestartBtn" Style="{StaticResource grayBtn}" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="100.709" Canvas.Top="103.4" Text="重 启" MouseDown="nginxRestartBtn_MouseDown"/>
                             <Rectangle x:Name="nginxImg" Height="42" Canvas.Left="7.109" Canvas.Top="32" Width="154">
                                 <Rectangle.Fill>
                                     <ImageBrush ImageSource="/nginx.png"/>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Ellipse x:Name="nginxStatusImg" Height="20" Canvas.Left="7.109" Canvas.Top="108" Width="20" Fill="#FFC80000"/>
+                            <Ellipse x:Name="nginxStatusImg" Height="20" Canvas.Left="7.109" Canvas.Top="108" Width="20" Fill="{Binding NginxIconBg}"/>
                             <Label x:Name="nginxVersionLabel" Content="nginx-1.18.0" Height="27" Canvas.Left="39.109" Canvas.Top="148.9" Width="101" MouseDoubleClick="Label_MouseDoubleClick" ToolTip="双击查看配置"/>
                         </Canvas>
                         <Canvas x:Name="mysqlBox" Margin="154,37,222,175" Grid.Column="2">
-                            <TextBlock Style="{StaticResource ResourceKey=defautBtn}" x:Name="mysqlRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="38.309" Canvas.Top="103.4" Text="启 动" MouseDown="mysqlRunBtn_MouseDown"/>
+                            <TextBlock Style="{StaticResource ResourceKey=defautBtn}" x:Name="mysqlRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="38.309" Canvas.Top="103.4" Text="{Binding MysqlBtn}" MouseDown="mysqlRunBtn_MouseDown"/>
                             <TextBlock x:Name="mysqlRestartBtn" Style="{StaticResource grayBtn}" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="108.709" Canvas.Top="103.4" Text="重 启" MouseDown="mysqlRestartBtn_MouseDown"/>
                             <Rectangle x:Name="mysqlImg" Height="72" Canvas.Left="14.309" Canvas.Top="12.8" Width="154">
                                 <Rectangle.Fill>
                                     <ImageBrush ImageSource="/mysql.png"/>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Ellipse x:Name="mysqlStatusImg" Height="20" Canvas.Left="14.309" Canvas.Top="108" Width="20" Fill="#FFC80000"/>
+                            <Ellipse x:Name="mysqlStatusImg" Height="20" Canvas.Left="14.309" Canvas.Top="108" Width="20" Fill="{Binding MysqlIconBg}"/>
                             <Label x:Name="mysqlVersionLabel" Content="mysql-5.7.26" Height="25" Canvas.Left="56.109" Canvas.Top="150.4" Width="102" ToolTip="双击查看配置" MouseDoubleClick="Label_MouseLeftButtonDown"/>
                         </Canvas>
                         <ScrollViewer x:Name="logboxwarp" VerticalScrollBarVisibility="Hidden" Margin="0,238,32,56" Grid.Column="1" Grid.ColumnSpan="2">
@@ -50,14 +49,14 @@
                             </TextBlock>
                         </ScrollViewer>
                         <Canvas x:Name="phpBox" Margin="366,37,14,175" Grid.Column="2">
-                            <TextBlock Style="{StaticResource ResourceKey=defautBtn}" x:Name="phpRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="37.509" Canvas.Top="103.4" Text="启 动" MouseDown="phpRunBtn_MouseDown"/>
+                            <TextBlock Style="{StaticResource ResourceKey=defautBtn}" x:Name="phpRunBtn" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="37.509" Canvas.Top="103.4" Text="{Binding PhpBtn}" MouseDown="phpRunBtn_MouseDown"/>
                             <TextBlock x:Name="phpRestartBtn" Style="{StaticResource grayBtn}" Height="30" TextWrapping="Wrap" Width="60" Padding="16,7,0,0" Canvas.Left="107.909" Canvas.Top="103.4" Text="重 启" MouseDown="phpRestartBtn_MouseDown"/>
                             <Rectangle x:Name="phpImg" Height="88" Canvas.Left="-2.391" Canvas.Top="9.6" Width="183">
                                 <Rectangle.Fill>
                                     <ImageBrush ImageSource="/php.png"/>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Ellipse x:Name="phpStatusImg" Height="20" Canvas.Left="13.509" Canvas.Top="108" Width="20" Fill="#FFC80000"/>
+                            <Ellipse x:Name="phpStatusImg" Height="20" Canvas.Left="13.509" Canvas.Top="108" Width="20" Fill="{Binding PhpIconBg}"/>
                             <Label x:Name="phpVersionLabel" Content="php7.3.4" Height="27" Canvas.Left="68.709" Canvas.Top="144.1" Width="88" ToolTip="双击查看配置" MouseDoubleClick="Label_MouseLeftButtonDown_1"/>
                         </Canvas>
 
@@ -99,6 +98,7 @@
                                     <Label Height="24" Width="68" Canvas.Left="10.4" Canvas.Top="71.135" Content="Mysql版本"/>
                                     <ComboBox x:Name="mysqlVersionSelect" Height="21" Width="84" Canvas.Left="95.2" Canvas.Top="72.735" SelectionChanged="mysqlVersionSelect_SelectionChanged"/>
                                     <Label x:Name="appManager" Style="{StaticResource defautBtnLable}" Content="应用管理" Height="24" Canvas.Left="517" Canvas.Top="4.8" Width="58" MouseLeftButtonUp="refreshWebSIteBtn_Copy_MouseLeftButtonUp" Visibility="Visible"/>
+                                    <Label x:Name="phpExtManager" Style="{StaticResource defautBtnLable}" Content="扩展管理" Height="24" Canvas.Left="197" Canvas.Top="40" Width="58" Visibility="Visible" MouseLeftButtonDown="phpExtManager_MouseLeftButtonDown"/>
                                 </Canvas>
                             </GroupBox>
 

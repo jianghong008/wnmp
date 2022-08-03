@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using wnmp.models;
 using wnmp.pages;
 using wnmp.tools;
 
@@ -17,12 +18,12 @@ namespace wnmp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainModel model;
         private WebSite ws;
         private download DownloadPage;
+        private PHPExt PHPExt;
         private List<SiteConf> SiteList;
-        private bool NginxStopping = false;
-        private bool MysqlStopping = false;
-        private bool PHPStopping = false;
+        
         private bool AppQuit = false;
         private long LastClickTime;//防重复点击
         private int CheckTime = 5*1000;//监控间隔时间
@@ -47,8 +48,9 @@ namespace wnmp
         {
             //加载配置
             appConf = new AppConf();
-            
+
             tool = new Tools(appConf);
+            tool.getWnmpVersions();
             //多开限制
             if (tool.CheckAppIsRunning())
             {
@@ -57,7 +59,9 @@ namespace wnmp
                 return;
 
             }
-            tool.getWnmpVersions();
+            
+            model = new MainModel();
+            DataContext = model;
             //异步加载
             new Thread(() => {
 
@@ -430,30 +434,24 @@ namespace wnmp
                 LastClickTime = time;
             }
             //控制nginx
-            var btn = (TextBlock)sender;
-            var str = btn.Text;
-            if(str=="启 动")
+            if(model.NginxStopping)
             {
+                //启动nginx
                 NginxUserRunning = true;
+                model.NginxStopping = false;
                 Log("启动Nginx...");
                 tool.CmdNginx("start");
-                btn.Text = "停 止";
-                nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0,255,0));
             }
             else
             {
+                //停止nginx
                 NginxUserRunning = false;
-                if (NginxStopping)
-                {
-                    return;
-                }
-                NginxStopping = true;
-                Log("正在停止Nginx...");
+                Log("停止Nginx...");
                 try
                 {
+                    model.NginxStopping = true;
                     tool.CmdNginx("stop");
-                    btn.Text = "启 动";
-                    nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    
                 }
                 catch
                 {
@@ -477,34 +475,24 @@ namespace wnmp
                     }
                     if (tool.NginxIsRunning())
                     {
-                        Dispatcher.Invoke(new Action(() => {
-                            nginxRunBtn.Text = "停 止";
-                            nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                            if (NginxStopping)
-                            {
-                                NginxStopping = false;
-                                Log("Nginx停止失败");
-                            }
-                        }));
-                        
+                        //nginx运行中
+                        model.NginxStopping = false;
+
                     }
                     else
                     {
+                        //已停止nginx
                         if (NginxUserRunning)
                         {
+                            model.NginxStopping = false;
                             //如果用户启动，则守护该进程
                             Log("Nginx意外停止，正在重启...");
                             tool.CmdNginx("start");
                         }
-                        Dispatcher.Invoke(new Action(() => {
-                            if (NginxStopping)
-                            {
-                                Log("已停止Nginx");
-                            }
-                            nginxRunBtn.Text = "启 动";
-                            NginxStopping = false;
-                            nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                        }));
+                        else
+                        {
+                            model.NginxStopping = true;
+                        }
                         
                     }
                     Thread.Sleep(CheckTime);
@@ -528,10 +516,9 @@ namespace wnmp
             //重启nginx
             if (tool.NginxIsRunning())
             {
+                model.NginxStopping = false;
                 Log("重启Nginx...");
                 tool.CmdNginx("restart");
-                nginxRunBtn.Text = "停 止";
-                nginxStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
             }
         }
 
@@ -573,16 +560,7 @@ namespace wnmp
                     }
                     if (tool.MysqlIsRunning())
                     {
-                        Dispatcher.Invoke(new Action(() => {
-                            mysqlRunBtn.Text = "停 止";
-                            mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                            if (MysqlStopping)
-                            {
-                                MysqlStopping = false;
-                                Log("Msql停止失败");
-                            }
-                        }));
-
+                        model.MysqlStopping = false;
                     }
                     else
                     {
@@ -592,15 +570,11 @@ namespace wnmp
                             Log("Mysql意外停止，正在重启...");
                             tool.CmdMysql("start");
                         }
-                        Dispatcher.Invoke(new Action(() => {
-                            if (MysqlStopping)
-                            {
-                                Log("Mysql已停止");
-                            }
-                            mysqlRunBtn.Text = "启 动";
-                            MysqlStopping = false;
-                            mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                        }));
+                        else
+                        {
+                            model.MysqlStopping = true;
+                        }
+                       
 
                     }
                     Thread.Sleep(CheckTime);
@@ -627,31 +601,26 @@ namespace wnmp
                 LastClickTime = time;
             }
             //控制mysql
-            var btn = (TextBlock)sender;
-            var str = btn.Text;
-            if (str == "启 动")
+            if (model.MysqlStopping)
             {
+                //启动MySQL
                 MysqlUserRunning = true;
+                model.MysqlStopping = false;
                 Log("启动Mysql...");
                 tool.CmdMysql("start");
-                btn.Text = "停 止";
-                mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                
             }
             else
             {
+                //停止MySQL
                 MysqlUserRunning = false;
-                if (MysqlStopping)
-                {
-                    return;
-                }
-                MysqlStopping = true;
                 
                 try
                 {
-                    Log("正在停止Mysql...");
+                    model.MysqlStopping = true;
+                    Log("停止Mysql...");
                     tool.CmdMysql("stop");
-                    btn.Text = "启 动";
-                    mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    
                 }
                 catch
                 {
@@ -680,8 +649,7 @@ namespace wnmp
                 {
                     Log("重启Mysql...");
                     tool.CmdMysql("restart");
-                    mysqlRunBtn.Text = "停 止";
-                    mysqlStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                    model.MysqlStopping = false;
                 }
                 catch
                 {
@@ -730,35 +698,32 @@ namespace wnmp
             }
             
             //控制PHP
-            var btn = (TextBlock)sender;
-            var str = btn.Text;
-            if (str == "启 动")
+            if (model.PHPStopping)
             {
+                //启动php
                 PhpUserRunning = true;
+                model.PHPStopping = false;
                 Log("启动PHP...");
                 tool.CmdPHP("start");
-                btn.Text = "停 止";
-                phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                Trace.WriteLine(0);
             }
             else
             {
                 PhpUserRunning = false;
-                if (PHPStopping)
+                //停止php
+                if (model.PHPStopping)
                 {
                     return;
                 }
                 
                 try
                 {
-                    Log("正在停止PHP...");
-                    PHPStopping = true;
+                    Log("停止PHP...");
+                    model.PHPStopping = true;
                     tool.CmdPHP("stop");
-                    btn.Text = "启 动";
-                    phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
                 }
                 catch
                 {
+                    model.PHPStopping = false;
                     Log("PHP停止失败，稍后重试");
                 }
 
@@ -778,34 +743,35 @@ namespace wnmp
                     }
                     if (tool.PHPIsRunning())
                     {
-                        Dispatcher.Invoke(new Action(() => {
-                            phpRunBtn.Text = "停 止";
-                            phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-                            if (PHPStopping)
-                            {
-                                PHPStopping = false;
+                        
+                        //停止失败
+                        if (model.PHPStopping)
+                        {
+                            Dispatcher.Invoke(new Action(() => {
                                 Log("PHP停止失败");
-                            }
-                        }));
-
+                            }));
+                        }
+                        //运行中
+                        model.PHPStopping = false;
                     }
                     else
                     {
+                        //已停止
                         if (PhpUserRunning)
                         {
                             //如果用户启动，则守护该进程
-                            Log("PHP意外停止，正在重启...");
+                            model.PHPStopping = false;
+                            Dispatcher.Invoke(new Action(() => {
+                                Log("PHP意外停止，正在重启...");
+                            }));
                             tool.CmdPHP("start");
                         }
-                        Dispatcher.Invoke(new Action(() => {
-                            if (PHPStopping)
-                            {
-                                Log("PHP已停止");
-                            }
-                            phpRunBtn.Text = "启 动";
-                            PHPStopping = false;
-                            phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-                        }));
+                        else
+                        {
+                            //正常停止
+                            model.PHPStopping = true;
+                        }
+                        
 
                     }
                     Thread.Sleep(CheckTime);
@@ -832,8 +798,7 @@ namespace wnmp
                 {
                     Log("重启PHP...");
                     tool.CmdPHP("restart");
-                    phpRunBtn.Text = "停 止";
-                    phpStatusImg.Fill = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                    model.PHPStopping = false;
                 }
                 catch
                 {
@@ -1059,6 +1024,31 @@ namespace wnmp
                 
             }
 
+        }
+
+        private void phpExtManager_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //打开软件扩展界面
+            if (PHPExt == null)
+            {
+                PHPExt = new PHPExt(appConf);
+                PHPExt.Show();
+            }
+            else
+            {
+                try
+                {
+                    PHPExt.Activate();
+                    PHPExt.Show();
+                }
+                catch
+                {
+                    PHPExt = null;
+                    PHPExt = new PHPExt(appConf);
+                    PHPExt.Show();
+                }
+
+            }
         }
     }
 }

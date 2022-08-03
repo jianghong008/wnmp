@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_LastSelectedProfileId>D:\www\study\csharp\wnmp\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>F:\test\csharp\wnmp\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">
@@ -10,6 +10,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Update="pages\AppManager.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="pages\PHPExt.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="webSite.xaml.cs">
@@ -21,6 +24,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="pages\AppManager.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="pages\PHPExt.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="style\main.xaml">
