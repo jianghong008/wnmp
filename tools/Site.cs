@@ -158,8 +158,8 @@ namespace wnmp.tools
                 text += "\r127.0.0.1 " + conf_name;
             }
             //去掉空行
-            //text = Regex.Replace(text, @"[\s\t\n]", "");
-            //text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
+            text = Regex.Replace(text, @"\n\s", "");
+            text = Encoding.UTF8.GetString(Encoding.Default.GetBytes(text));
             //重新写入
             StreamWriter sw = new StreamWriter(filePath);
             sw.Write(text);
