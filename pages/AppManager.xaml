@@ -10,9 +10,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="31*"/>
             <ColumnDefinition Width="565*"/>
-            <ColumnDefinition Width="73*"/>
+            <ColumnDefinition Width="67*"/>
+            <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
-        <TabControl Grid.ColumnSpan="3" Margin="0,31,0,0">
+        <TabControl Grid.ColumnSpan="4" Margin="0,31,0,0">
             <TabItem Header="PHP" Style="{StaticResource TabItemLineStyle}">
                 <Grid Background="#FFE5E5E5">
                     <Canvas Margin="0,0,0,20">
