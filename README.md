@@ -3,9 +3,7 @@
 #### 介绍
 基于c# wpf，wnmp PHP集成管理
 
-[演示文件](https://file.jhhaha.com/blog/files/2022-04-26/wnmp.msi)
-
-[必须的软件包](https://file.jhhaha.com/blog%2Ffiles%2Fwnmp%E8%BD%AF%E4%BB%B6%E5%8C%85.zip)
+[安装本程序](https://gitee.com/jhpw/wnmp/releases/tag/2021-12-01)
 
 #### 使用说明
 
