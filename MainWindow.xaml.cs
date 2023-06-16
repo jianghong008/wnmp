@@ -64,19 +64,6 @@ namespace wnmp
             DataContext = model;
             //异步加载
             new Thread(() => {
-
-                //配置检查
-                if (appConf.checkNewVersion(appConf.appNewVersion))
-                {
-                    Dispatcher.Invoke(new Action(() => {
-                        MessageBoxResult mbr = MessageBox.Show("有新版本可用，是否立即更新？", "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (mbr == MessageBoxResult.Yes)
-                        {
-                            UpdateVersion();
-                        }
-
-                    }));
-                }
                 Dispatcher.Invoke(new Action(() => {
                     //设置UI
                     initUI();
@@ -89,6 +76,19 @@ namespace wnmp
                     //检测php配置
                     tool.CheckPhpINI();
                 }));
+                //配置检查
+                if (appConf.checkNewVersion(appConf.appNewVersion))
+                {
+                    Dispatcher.Invoke(new Action(() => {
+                        MessageBoxResult mbr = MessageBox.Show("有新版本可用，是否立即更新？", "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (mbr == MessageBoxResult.Yes)
+                        {
+                            UpdateVersion();
+                        }
+
+                    }));
+                }
+                
             }).Start();
             //nginx 监控
             checkNginx();
