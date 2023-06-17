@@ -41,12 +41,17 @@
             <TabItem Header="Mysql" Style="{StaticResource TabItemLineStyle}">
                 <Grid Background="#FFE5E5E5">
                     <Canvas Margin="0,0,0,20">
-                        <ScrollViewer Height="378" Width="663" Canvas.Left="0.1">
-                            <ScrollViewer.FocusVisualStyle>
-                                <Style/>
-                            </ScrollViewer.FocusVisualStyle>
-                            <ListBox x:Name="mysqlListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended" Height="377"/>
-                        </ScrollViewer>
+                        <ListBox x:Name="mysqlListBox" IsSynchronizedWithCurrentItem="True" SelectionMode="Extended" Height="377">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Canvas Width="624" Height="50">
+                                            <Label Margin="0, 12, 0, 0" Width="350" ToolTip="双击打开所在位置" MouseDoubleClick="L_MouseDoubleClick" DataContext="{Binding Path}"  Content="{Binding Title}"/>
+                                            <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
+                                            <Label Content="移除" Width="32" Height="28" Margin="560, 12, 0, 0" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                     </Canvas>
                 </Grid>
             </TabItem>

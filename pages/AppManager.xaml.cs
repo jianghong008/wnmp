@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using wnmp.models;
 using wnmp.tools;
 
 namespace wnmp.pages
@@ -16,13 +18,29 @@ namespace wnmp.pages
         Tools tool;
         AppConf conf;
         MainWindow win;
+        ObservableCollection<ApplicationModel> mysqlVersions = new ObservableCollection<ApplicationModel>();
         public download(Tools t, AppConf c, MainWindow mw)
         {
             InitializeComponent();
             tool = t;
             conf = c;
             win = mw;
-            loadList();
+            //loadList();
+            
+            
+            for (int i = 0; i < tool.mysqlVersions.Length; i++)
+            {
+                ApplicationModel m = new ApplicationModel();
+                m.Title = tool.mysqlVersions[i];
+                m.Path = "wnmp/mysql/" + tool.mysqlVersions[i];
+                m.Installed = false;
+                mysqlVersions.Add(m);
+            }
+            mysqlListBox.ItemsSource = mysqlVersions;
+
+            WebSpider.GetNginxVersions();
+
+
         }
 
         /// <summary>
@@ -145,6 +163,8 @@ namespace wnmp.pages
         {
             //打开目录
             Label btn = (Label)sender;
+            Trace.WriteLine("title:");
+            Trace.WriteLine(btn.DataContext);
             ExplorePath(tool.RootPath + btn.DataContext.ToString());
         }
 
