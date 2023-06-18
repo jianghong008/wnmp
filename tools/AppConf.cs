@@ -17,13 +17,15 @@ namespace wnmp.tools
         /// </summary>
         public string appName = "wnmp";
         public string appHost = "";
-        public string autoUpdate = "1";//0-不更新 1-自动更新
-        public string quitType = "1";//0-直接退出 1-隐藏托盘
+        public string autoUpdate = "0";//0-不更新 1-自动更新
+        public string quitType = "0";//0-直接退出 1-隐藏托盘
         /// <summary>
         /// 当前版本
         /// </summary>
         public string appVersion = "1.0.0";
         public string appNewVersion = "1.0.0";
+
+        public string appsUrl = "";
         /// <summary>
         /// nignx版本
         /// </summary>
@@ -56,12 +58,12 @@ namespace wnmp.tools
         }
         private void load()
         {
+            
             string path = Site.GetRootPath() + "/wnmp.ini";
             if (!File.Exists(path))
             {
-                MessageBox.Show("主程序配置文件未找到！","错误");
-                Environment.Exit(0);
-                return;
+                //缺省配置
+                Save();
             }
             try
             {
@@ -88,6 +90,11 @@ namespace wnmp.tools
                     if (str.IndexOf("appVersion") != -1)
                     {
                         appVersion = str.Replace("appVersion=", "").Trim();
+                    }
+                    //软件下载地址
+                    if (str.IndexOf("appsUrl") != -1)
+                    {
+                        appsUrl = str.Replace("appsUrl=", "").Trim();
                     }
                     //更新设置
                     if (str.IndexOf("autoUpdate") != -1)
@@ -128,10 +135,7 @@ namespace wnmp.tools
         public bool Save()
         {
             string path = Site.GetRootPath() + "/wnmp.ini";
-            if (!File.Exists(path))
-            {
-                return false;
-            }
+            
             try
             {
                 StreamWriter sw = new StreamWriter(path);
@@ -140,6 +144,8 @@ namespace wnmp.tools
                 sw.WriteLine("appHost=" + appHost);
                 sw.WriteLine("autoUpdate=" + autoUpdate);
                 sw.WriteLine("quitType=" + quitType + "\n");
+                sw.WriteLine("appVersion=" + appVersion + "\n");
+                sw.WriteLine("appsUrl=" + appsUrl + "\n");
                 sw.WriteLine("#nginx");
                 sw.WriteLine("nginxVersion=" + nginxVersion+"\n");
                 sw.WriteLine("#mysql");
@@ -162,7 +168,7 @@ namespace wnmp.tools
         /// <returns>是否需要更新</returns>
         public bool checkNewVersion(string v)
         {
-            if (autoUpdate == "0")
+            if (autoUpdate == "0" || appHost.Equals(""))
             {
                 return false;
             }

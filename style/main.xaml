@@ -8,6 +8,10 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#FF074FB9"/>
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#FF797979"/>
+                <Setter Property="Background" Value="#FFBABABA"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="defautBtnLable" TargetType="Label">
@@ -17,6 +21,10 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#FF074FB9"/>
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#FF797979"/>
+                <Setter Property="Background" Value="#FFBABABA"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="dangerBtnLable" TargetType="Label">
@@ -25,6 +33,10 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#FFAE0000"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="#FF976C6C"/>
             </Trigger>
         </Style.Triggers>
     </Style>

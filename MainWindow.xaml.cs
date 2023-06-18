@@ -111,9 +111,9 @@ namespace wnmp
         {
             Title = appConf.appName + "集成管理";
             windowsTitle.Text = Title +" "+ appConf.appVersion;
-            phpVersionLabel.Content = "PHP " + appConf.phpVersion;
-            mysqlVersionLabel.Content = "Mysql " + appConf.mysqlVersion;
-            nginxVersionLabel.Content = "Nginx " + appConf.nginxVersion;
+            phpVersionLabel.Content = appConf.phpVersion;
+            mysqlVersionLabel.Content = appConf.mysqlVersion;
+            nginxVersionLabel.Content =  appConf.nginxVersion;
             if (appConf.autoUpdate=="1")
             {
                 autoUpdate.IsChecked = true;
@@ -140,6 +140,13 @@ namespace wnmp
             tool.CheckMysqlINI();
             //检测php配置
             tool.CheckPhpINI();
+        }
+        /// <summary>
+        /// 重新加载数据
+        /// </summary>
+        public void ReloadData()
+        {
+            LoadApps();
         }
         /// <summary>
         /// 加载可用版本
@@ -242,7 +249,7 @@ namespace wnmp
                     Padding = new Thickness(250,105,0,0)
                 };
                 siteListBox.Items.Add(cc);
-                SiteList = (new Site(appConf)).GetSiteList();
+                SiteList = new Site(appConf).GetSiteList();
                 siteListBox.Items.Clear();
             }
             foreach (SiteConf item in SiteList)
@@ -957,7 +964,7 @@ namespace wnmp
         private void phpVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = phpVersionSelect.SelectedIndex;
-            if (UIisLoaded)
+            if (UIisLoaded && i < tool.phpVersions.Length && i >= 0)
             {
                 if (!tool.PHPIsRunning())
                 {
@@ -977,7 +984,7 @@ namespace wnmp
         private void nginxVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = nginxVersionSelect.SelectedIndex;
-            if (UIisLoaded)
+            if (UIisLoaded && i < tool.nginxVersions.Length && i >= 0)
             {
                 if (!tool.NginxIsRunning())
                 {
@@ -996,7 +1003,7 @@ namespace wnmp
         private void mysqlVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = mysqlVersionSelect.SelectedIndex;
-            if (UIisLoaded)
+            if (UIisLoaded && i < tool.mysqlVersions.Length && i >= 0)
             {
                 if (!tool.MysqlIsRunning())
                 {
@@ -1014,6 +1021,7 @@ namespace wnmp
 
         private void refreshWebSIteBtn_Copy_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            
             //打开软件下载界面
             if (DownloadPage == null)
             {
@@ -1024,6 +1032,7 @@ namespace wnmp
             {
                 try
                 {
+                    DownloadPage.Owner = this;
                     DownloadPage.Activate();
                     DownloadPage.Show();
                 }

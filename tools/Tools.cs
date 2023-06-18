@@ -22,6 +22,9 @@ namespace wnmp.tools
         public string[] mysqlVersions = { };
         public string[] phpVersions = { };
 
+        private string MyIniTemplate = "[mysql]\r\ndefault-character-set=utf8 \r\n[mysqld]\r\nport=3306\r\nbasedir= \r\ndatadir= \r\ncharacter-set-server=utf8";
+        private string MySqlInitCmd = ".\\mysqld.exe --initialize-insecure --user=mysql --explicit_defaults_for_timestamp";
+
         private AppConf appConf;
         public string RootPath = "";
         [DllImport("User32.dll")]
@@ -64,6 +67,9 @@ namespace wnmp.tools
         /// </summary>
         public void getWnmpVersions()
         {
+            phpVersions = new string[] { };
+            nginxVersions = new string[] { };
+            mysqlVersions = new string[] { };
             try
             {
                 //nginx
@@ -149,7 +155,7 @@ namespace wnmp.tools
             string path = Site.GetRootPath()+NginxRoot + "/nginx.exe";
             if (!File.Exists(path))
             {
-                _ = MessageBox.Show("Nginx未找到", "错误");
+                _ = MessageBox.Show("Nginx未找到,请到设置面板选择软件版本", "错误");
                 return;
             }
             ProcessStartInfo info = new ProcessStartInfo();
@@ -277,7 +283,7 @@ namespace wnmp.tools
             string path = Site.GetRootPath() + MysqlRoot + "bin/mysqld.exe";
             if (!File.Exists(path))
             {
-                MessageBox.Show("Mysql未找到", "错误");
+                MessageBox.Show("Mysql未找到,请到设置面板选择软件版本", "错误");
                 return;
             }
             ProcessStartInfo info = new ProcessStartInfo();
@@ -292,6 +298,13 @@ namespace wnmp.tools
             p.Start();
             //跳转Mysql工作目录，否则启动失败
             p.StandardInput.WriteLine("cd " + MysqlRoot+"bin");
+            //检查mysql是否已经初始化
+            if (!Directory.Exists(Site.GetRootPath() + MysqlRoot+"/data"))
+            {
+                //初始化mysqld
+                p.StandardInput.WriteLine(MySqlInitCmd);
+            }
+
             Process[] pp = Process.GetProcessesByName("mysqld");
             if (pp.Length > 0)
             {
@@ -342,7 +355,6 @@ namespace wnmp.tools
             p.StandardInput.WriteLine("exit");
             //p.WaitForExit();
             p.Close();
-            Console.WriteLine(p);
         }
         /// <summary>
         /// 检查Mysql配置并自动修复
@@ -352,44 +364,33 @@ namespace wnmp.tools
             loadPath();
             string ini = Site.GetRootPath() + MysqlRoot;
             string path = ini + "my.ini";
-            if (File.Exists(path))
+            
+            try
             {
-                //如果存在则检查工作目录
-
-                try
+                string txt = MyIniTemplate;
+                if (File.Exists(path))
                 {
+                    //如果存在则检查工作目录
                     StreamReader sr = new StreamReader(path);
-                    string txt = sr.ReadToEnd();
+                    txt = sr.ReadToEnd();
                     sr.Close();
-                    //删除老配置
-                    if (File.Exists(ini + "my.ini"))
-                    {
-                        File.Delete(ini + "my.ini");
-                    }
-
-                    ini = ini.Replace(@"\", @"/");
-                    //工作目录
-                    txt = Regex.Replace(txt, "basedir=.+", "basedir = \"" + ini+"\"");
-                    //数据目录
-                    txt = Regex.Replace(txt, "datadir=.+", "datadir = \"" + ini + "data/\"");
-                    //写入
-                    StreamWriter sw = new StreamWriter(ini + "my.ini");
-                    sw.Write(txt);
-                    sw.Flush();
-                    sw.Close();
-                    Console.WriteLine(txt);
                 }
-                catch
-                {
-                    MessageBox.Show("初始化Mysql失败！", "错误");
-                }
-
+                ini = ini.Replace(@"\", @"/");
+                //工作目录
+                txt = Regex.Replace(txt, "basedir=.+", "basedir = \"" + ini + "\"");
+                //数据目录
+                txt = Regex.Replace(txt, "datadir=.+", "datadir = \"" + ini + "data/\"");
+                //写入
+                StreamWriter sw = new StreamWriter(ini + "my.ini");
+                sw.Write(txt);
+                sw.Flush();
+                sw.Close();
+                Console.WriteLine(txt);
             }
-            else
+            catch
             {
-                MessageBox.Show(path+"不存在！", "错误");
+                MessageBox.Show("初始化Mysql失败！", "错误");
             }
-
         }
         /// <summary>
         /// 检查php配置并自动修复
@@ -432,12 +433,10 @@ namespace wnmp.tools
                 }
 
             }
-            else
-            {
-                MessageBox.Show(path+"不存在！","错误");
-            }
+            
 
         }
+        
         /// <summary>
         /// 检测Mysql是否正在运行
         /// </summary>
@@ -466,7 +465,7 @@ namespace wnmp.tools
             string path = Site.GetRootPath() + PHPRoot + "php-cgi.exe";
             if (!File.Exists(path))
             {
-                MessageBox.Show("PHP未找到", "错误");
+                MessageBox.Show("PHP未找到,请到设置面板选择软件版本", "错误");
                 return;
             }
             ProcessStartInfo info = new ProcessStartInfo();

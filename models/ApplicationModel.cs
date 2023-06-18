@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Media;
 
 namespace wnmp.models
 {
@@ -18,6 +20,13 @@ namespace wnmp.models
         private string path;
 
         private string url;
+        private float perecnt;
+        private bool installing;
+
+        private bool wrong;
+
+        public string Config;
+        public string Type;
 
         private void OnPropertyChanged(string property)
         {
@@ -86,6 +95,102 @@ namespace wnmp.models
             {
                 is_use = value;
                 OnPropertyChanged("IsUse");
+            }
+        }
+
+        public Visibility EditAble
+        {
+            get
+            {
+                if(installed)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
+            }
+        }
+        public Visibility InstallAble
+        {
+            get
+            {
+                if (!installed && !installing)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
+            }
+            set
+            {
+                installed = value == Visibility.Hidden;
+                OnPropertyChanged("InstallAble");
+                OnPropertyChanged("EditAble");
+            }
+        }
+        public bool Installing
+        {
+            get { return installing; }
+        }
+        public bool IsEnabled
+        {
+            get
+            {
+                return !installing;
+            }
+        }
+        public Visibility InstallingAble
+        {
+            get
+            {
+                if (installing || wrong)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
+            }
+            set
+            {
+                installing = value == Visibility.Visible;
+                OnPropertyChanged("InstallingAble");
+                OnPropertyChanged("Installing");
+                OnPropertyChanged("IsEnabled");
+            }
+        }
+
+        public float Percent
+        {
+            get
+            {
+                return perecnt;
+            }
+            set
+            {
+                perecnt = value;
+                OnPropertyChanged("Percent");
+            }
+        }
+        public Brush PercentColoer
+        {
+            get
+            {
+                return wrong? Brushes.OrangeRed : Brushes.Green;
+            }
+            
+        }
+        public bool Wrong
+        {
+            set
+            {
+                wrong = value;
+                OnPropertyChanged("PercentColoer");
             }
         }
     }

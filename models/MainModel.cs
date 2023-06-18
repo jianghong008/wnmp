@@ -21,11 +21,11 @@ namespace wnmp.models
         public long LastClickTime;//防重复点击
         public int CheckTime = 5 * 1000;//监控间隔时间
 
-        private bool _UIisLoaded = false;//加载完成
-
         public bool _NginxUserRunning = false;//用户启动Nginx
         public bool _MysqlUserRunning = false;//用户启动mysql
         public bool _PhpUserRunning = false;//用户启动php
+
+        public string Name = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string property)

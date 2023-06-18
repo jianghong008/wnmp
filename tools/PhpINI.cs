@@ -10,7 +10,6 @@ namespace wnmp.tools
 {
     internal class PhpINI
     {
-        private string originIni;
         public ObservableCollection<PhpExtModel> extensions = new ObservableCollection<PhpExtModel>();
         public bool LoadState=true;
         private AppConf appConf;
@@ -47,7 +46,11 @@ namespace wnmp.tools
                 {
                     continue;
                 }
-                
+                line = line.Trim();
+                if (line == "")
+                {
+                    continue;
+                }
                 PhpExtModel mod = new PhpExtModel();
                 
                 //开启的扩展
@@ -64,6 +67,9 @@ namespace wnmp.tools
                     mod.ExtName = etx;
                     mod.Open = false;
                 }
+                //去掉注释
+                string[] tmp = mod.ExtName.Split(';');
+                mod.ExtName = tmp[0].Trim();
                 extensions.Add(mod);
             }
             
