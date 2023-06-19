@@ -25,7 +25,6 @@ namespace wnmp.models
         public bool _MysqlUserRunning = false;//用户启动mysql
         public bool _PhpUserRunning = false;//用户启动php
 
-        public string Name = "";
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string property)
@@ -174,5 +173,6 @@ namespace wnmp.models
                 }
             }
         }
+
     }
 }
