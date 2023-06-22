@@ -21,4 +21,4 @@
 ![站点设置](https://images.gitee.com/uploads/images/2021/0803/175123_3622c3ef_2194195.png "屏幕截图.png")
 
 ![php扩展管理](https://file.jhhaha.com/blog/files/php%E6%89%A9%E5%B1%95.png)
-![输入图片说明](preview%E5%BA%94%E7%94%A8%E7%AE%A1%E7%90%86.jpg)
+![输入图片说明](preview/%E5%BA%94%E7%94%A8%E7%AE%A1%E7%90%86.jpg)
