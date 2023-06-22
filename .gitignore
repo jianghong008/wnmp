@@ -1,6 +1,5 @@
 .vs
 /bin
 /obj
-Properties/PublishProfiles/FolderProfile1.pubxml.user
-/wnmp.csproj.user
-Properties/PublishProfiles/FolderProfile1.pubxml
+/Properties
+wnmp.csproj.user
