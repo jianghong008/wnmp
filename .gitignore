@@ -1,5 +1,8 @@
 .vs
+.vscode
 /bin
 /obj
 /Properties
 wnmp.csproj.user
+wnmp.ini
+wnmp
