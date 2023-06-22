@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--默认按钮样式-->
     <Style x:Key="defautBtn" TargetType="TextBlock">
+        
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="#FF0685DF"/>
         <Style.Triggers>
@@ -15,6 +16,21 @@
         </Style.Triggers>
     </Style>
     <Style x:Key="defautBtnLable" TargetType="Label">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="1" CornerRadius="4" Background="{TemplateBinding Background}">
+                        <Label Content="{TemplateBinding Label.Content}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="FontSize" Value="11"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize" Value="10"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="#FF0685DF"/>
         <Style.Triggers>
@@ -28,6 +44,21 @@
         </Style.Triggers>
     </Style>
     <Style x:Key="dangerBtnLable" TargetType="Label">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="1" CornerRadius="4" Background="{TemplateBinding Background}">
+                        <Label Content="{TemplateBinding Label.Content}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="FontSize" Value="11"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize" Value="10"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="#FFF63434"/>
         <Style.Triggers>
@@ -76,25 +107,16 @@
     </Style>
     <!--窗口样式-->
     <Style x:Key="window_Shadow" TargetType="{x:Type Window}">
-        <!--对象中心点用来定义所有RenderTransform变换中相对位置的的参考点,默认为图形的左上即(0,0),
-                该属性值为相对值,介于 0 和 1 之间的值被解释为每对 x，y 轴中的当前元素的范围的因素-->
-        <!--<Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>-->
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
                     <Grid Margin="8">
-                        <!--x:Static 引用中定义的任何静态的值的代码实体公共语言规范 (CLS)– 合规的方式。 引用的静态属性可以用于提供在 XAML 中属性的值
-                              SystemColors 定义的所需的静态成员的类型的名称。
-                              WindowBrushKey 使用WindowBrushKey创建对用于绘制窗口的客户端区域背景的画笔的动态引用。 如果更改画笔，将自动更新此动态引用。 若要创建的静态引用，不会自动更新，请使用WindowBrush。-->
                         <Rectangle Name="rt" Fill="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" Margin="10,10,0,0">
                             <Rectangle.Effect>
-                                <!--DropShadowEffect是WPF中一个阴影效果的类
-                                        BlurRadius模糊半径属性，获取或设置阴影边缘的定义(阴影有多模糊)
-                                        ShadowDepth属性设置投影距纹理下方的距离-->
                                 <DropShadowEffect BlurRadius="8" ShadowDepth="0"/>
                             </Rectangle.Effect>
                         </Rectangle>
-                        <!--SnapsToDevicePixels获取或设置一个值，该值确定在呈现过程中，此元素的呈现是否应使用特定于设备的像素设置。 这是依赖项属性。-->
                         <Border Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="10"

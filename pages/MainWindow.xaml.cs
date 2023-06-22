@@ -109,8 +109,8 @@ namespace wnmp
         /// </summary>
         public void initUI(bool loadList=true)
         {
-            Title = appConf.appName + "集成管理";
-            windowsTitle.Text = Title +" "+ appConf.appVersion;
+            Title = appConf.appName + "集成管理 "+ appConf.appVersion;
+            //windowsTitle.Text = Title +" "+ appConf.appVersion;
             phpVersionLabel.Content = appConf.phpVersion;
             mysqlVersionLabel.Content = appConf.mysqlVersion;
             nginxVersionLabel.Content =  appConf.nginxVersion;
@@ -155,7 +155,7 @@ namespace wnmp
         {
             nginxVersionSelect.Items.Clear();
             tool.getWnmpVersions();
-            for (int i = 0; i < tool.nginxVersions.Length; i++)
+            for (int i = 0; i < tool.nginxVersions.Count; i++)
             {
                 nginxVersionSelect.Items.Add(tool.nginxVersions[i]);
                 if (tool.nginxVersions[i] == appConf.nginxVersion)
@@ -164,7 +164,7 @@ namespace wnmp
                 }
             }
             mysqlVersionSelect.Items.Clear();
-            for (int i = 0; i < tool.mysqlVersions.Length; i++)
+            for (int i = 0; i < tool.mysqlVersions.Count; i++)
             {
                 mysqlVersionSelect.Items.Add(tool.mysqlVersions[i]);
                 if (tool.mysqlVersions[i] == appConf.mysqlVersion)
@@ -173,7 +173,7 @@ namespace wnmp
                 }
             }
             phpVersionSelect.Items.Clear();
-            for (int i = 0; i < tool.phpVersions.Length; i++)
+            for (int i = 0; i < tool.phpVersions.Count; i++)
             {
                 phpVersionSelect.Items.Add(tool.phpVersions[i]);
                 if (tool.phpVersions[i] == appConf.phpVersion)
@@ -427,6 +427,7 @@ namespace wnmp
         /// <param name="e"></param>
         private void nginxRunBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            
             //防重复点击
             long time = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
             if (LastClickTime > time - 1)
@@ -437,8 +438,9 @@ namespace wnmp
             {
                 LastClickTime = time;
             }
+            
             //控制nginx
-            if(model.NginxStopping)
+            if (model.NginxStopping)
             {
                 //启动nginx
                 NginxUserRunning = true;
@@ -486,7 +488,7 @@ namespace wnmp
                     else
                     {
                         //已停止nginx
-                        if (NginxUserRunning)
+                        if (NginxUserRunning && tool.CheckApp("nginx"))
                         {
                             model.NginxStopping = false;
                             //如果用户启动，则守护该进程
@@ -529,7 +531,8 @@ namespace wnmp
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            
+            closing_window_before();
+
         }
         private void show_windows(object sender, EventArgs e)
         {
@@ -560,6 +563,10 @@ namespace wnmp
             {
                 tool.CmdMysql("stop");
             }
+            if (tool.PHPIsRunning())
+            {
+                tool.CmdPHP("stop");
+            }
             Environment.Exit(0);
         }
         /// <summary>
@@ -580,7 +587,7 @@ namespace wnmp
                     }
                     else
                     {
-                        if (MysqlUserRunning)
+                        if (MysqlUserRunning && tool.CheckApp("mysql"))
                         {
                             //如果用户启动，则守护该进程
                             Log("Mysql意外停止，正在重启...");
@@ -616,6 +623,7 @@ namespace wnmp
             {
                 LastClickTime = time;
             }
+ 
             //控制mysql
             if (model.MysqlStopping)
             {
@@ -712,7 +720,6 @@ namespace wnmp
             {
                 LastClickTime = time;
             }
-            
             //控制PHP
             if (model.PHPStopping)
             {
@@ -773,7 +780,7 @@ namespace wnmp
                     else
                     {
                         //已停止
-                        if (PhpUserRunning)
+                        if (PhpUserRunning && tool.CheckApp("php"))
                         {
                             //如果用户启动，则守护该进程
                             model.PHPStopping = false;
@@ -855,8 +862,7 @@ namespace wnmp
                 this.DragMove();
             }
         }
-
-        private void close_windows(object sender, MouseButtonEventArgs e)
+        private void closing_window_before()
         {
             if (appConf.quitType == "0")
             {
@@ -883,7 +889,7 @@ namespace wnmp
                 if (TrayIcon == null)
                 {
                     TrayIcon = new System.Windows.Forms.NotifyIcon();
-                    TrayIcon.Icon = new System.Drawing.Icon("logo.ico");
+                    TrayIcon.Icon = new System.Drawing.Icon("images/logo.ico");
                     TrayIcon.BalloonTipText = appConf.appName + appConf.appVersion + "正在运行";
                     TrayIcon.Text = appConf.appName + appConf.appVersion + "正在运行";
 
@@ -899,7 +905,10 @@ namespace wnmp
                 }
                 TrayIcon.Visible = true;
             }
-            
+        }
+        private void close_windows(object sender, MouseButtonEventArgs e)
+        {
+            closing_window_before();
         }
 
         private void Label_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -964,13 +973,14 @@ namespace wnmp
         private void phpVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = phpVersionSelect.SelectedIndex;
-            if (UIisLoaded && i < tool.phpVersions.Length && i >= 0)
+            if (UIisLoaded && i < tool.phpVersions.Count && i >= 0 && !appConf.phpVersion.Equals(tool.phpVersions[i]))
             {
                 if (!tool.PHPIsRunning())
                 {
                     appConf.phpVersion = tool.phpVersions[i];
                     appConf.Save();
                     initUI(false);
+                    tool.CheckPhpINI();
                 }
                 else
                 {
@@ -980,17 +990,23 @@ namespace wnmp
                 
             }
         }
-
+        /// <summary>
+        /// 切换nginx
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nginxVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = nginxVersionSelect.SelectedIndex;
-            if (UIisLoaded && i < tool.nginxVersions.Length && i >= 0)
+            if (UIisLoaded && i < tool.nginxVersions.Count && i >= 0 && !appConf.nginxVersion.Equals(tool.nginxVersions[i]))
             {
                 if (!tool.NginxIsRunning())
                 {
                     appConf.nginxVersion = tool.nginxVersions[i];
                     appConf.Save();
                     initUI(false);
+                    loadList(true);
+                    Trace.WriteLine(appConf.nginxVersion);
                 }
                 else
                 {
@@ -1003,13 +1019,14 @@ namespace wnmp
         private void mysqlVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = mysqlVersionSelect.SelectedIndex;
-            if (UIisLoaded && i < tool.mysqlVersions.Length && i >= 0)
+            if (UIisLoaded && i < tool.mysqlVersions.Count && i >= 0 && !appConf.mysqlVersion.Equals(tool.mysqlVersions[i]))
             {
                 if (!tool.MysqlIsRunning())
                 {
                     appConf.mysqlVersion = tool.mysqlVersions[i];
                     appConf.Save();
                     initUI(false);
+                    tool.CheckMysqlINI();
                 }
                 else
                 {

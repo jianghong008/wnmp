@@ -188,13 +188,18 @@ namespace wnmp.tools
         /// <returns>SiteConf</returns>
         public List<SiteConf> GetSiteList()
         {
+            appConf.Load();
+            List<SiteConf> ar = new List<SiteConf>();
             string confPath = GetRootPath()+ appConf.NginxRoot + "conf/vhosts/";
-            
+            if (!File.Exists(GetRootPath() + appConf.NginxRoot+"nginx.exe"))
+            {
+                return ar;
+            }
             if (!Directory.Exists(confPath))
             {
                 Directory.CreateDirectory(confPath);
             }
-            List<SiteConf> ar = new List<SiteConf>();
+            
             try
             {
                 string[] file = Directory.GetFiles(confPath,"*.conf");

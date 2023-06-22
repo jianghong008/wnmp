@@ -14,6 +14,8 @@ namespace wnmp.tools
     }
     public class LocalAppsResources
     {
+        public string version = "1.0.0";
+        public string url = "";
         public List<AppsResourcesItem> php = new List<AppsResourcesItem>();
         public List<AppsResourcesItem> mysql = new List<AppsResourcesItem>();
         public List<AppsResourcesItem> nginx = new List<AppsResourcesItem>();

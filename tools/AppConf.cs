@@ -16,9 +16,8 @@ namespace wnmp.tools
         /// 程序名称
         /// </summary>
         public string appName = "wnmp";
-        public string appHost = "";
         public string autoUpdate = "0";//0-不更新 1-自动更新
-        public string quitType = "0";//0-直接退出 1-隐藏托盘
+        public string quitType = "1";//0-直接退出 1-隐藏托盘
         /// <summary>
         /// 当前版本
         /// </summary>
@@ -39,7 +38,7 @@ namespace wnmp.tools
         /// </summary>
         public string phpVersion = "";
 
-        public string NginxRoot = "";
+        private string _NginxRoot = "";
         public string MysqlRoot = "";
         public string PHPRoot = "";
 
@@ -51,12 +50,17 @@ namespace wnmp.tools
 
         public AppConf()
         {
-            load();
-            NginxRoot = "wnmp/nginx/" + nginxVersion + "/";
-            MysqlRoot = "wnmp/mysql/" + mysqlVersion + "/";
-            PHPRoot = "wnmp/php/" + phpVersion + "/";
+            Load();
+            
         }
-        private void load()
+        public string NginxRoot{
+            get
+            {
+                return _NginxRoot;
+            }
+            set { _NginxRoot = value; }
+        }
+        public void Load()
         {
             
             string path = Site.GetRootPath() + "/wnmp.ini";
@@ -81,11 +85,7 @@ namespace wnmp.tools
                     {
                         appName = str.Replace("appName=", "").Trim();
                     }
-                    //软件服务器地址
-                    if (str.IndexOf("appHost") != -1)
-                    {
-                        appHost = str.Replace("appHost=", "").Trim();
-                    }
+
                     //软件版本
                     if (str.IndexOf("appVersion") != -1)
                     {
@@ -129,7 +129,9 @@ namespace wnmp.tools
             {
                 MessageBox.Show("主程序配置读取失败！", "错误");
             }
-            
+            NginxRoot = "wnmp/nginx/" + nginxVersion + "/";
+            MysqlRoot = "wnmp/mysql/" + mysqlVersion + "/";
+            PHPRoot = "wnmp/php/" + phpVersion + "/";
         }
 
         public bool Save()
@@ -141,7 +143,6 @@ namespace wnmp.tools
                 StreamWriter sw = new StreamWriter(path);
                 sw.WriteLine("#wnmp");
                 sw.WriteLine("appName="+appName);
-                sw.WriteLine("appHost=" + appHost);
                 sw.WriteLine("autoUpdate=" + autoUpdate);
                 sw.WriteLine("quitType=" + quitType + "\n");
                 sw.WriteLine("appVersion=" + appVersion + "\n");
@@ -168,21 +169,21 @@ namespace wnmp.tools
         /// <returns>是否需要更新</returns>
         public bool checkNewVersion(string v)
         {
-            if (autoUpdate == "0" || appHost.Equals(""))
+            if (autoUpdate == "0" || appsUrl.Equals(""))
             {
                 return false;
             }
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(appHost+"/app.json");
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(appsUrl);
             req.Method = "GET";
             try
             {
                 using HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-                load();
+                Load();
                 StreamReader sr = new StreamReader(res.GetResponseStream());
                 string jsonText = sr.ReadToEnd();
                 sr.Close();
-                JObject jo = (JObject)JsonConvert.DeserializeObject(jsonText);
-                string version = jo["version"].ToString();
+                LocalAppsResources jo = JsonConvert.DeserializeObject<LocalAppsResources>(jsonText);
+                string version = jo.version.ToString();
                 bool yes = Version.Parse(version) > Version.Parse(appVersion);
                 if (yes)
                 {

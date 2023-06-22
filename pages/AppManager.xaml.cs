@@ -47,7 +47,7 @@ namespace wnmp.pages
         /// </summary>
         private void GetRemoteApps()
         {
-
+            Loading.Visibility = Visibility.Visible;
             new Thread(() =>
             {
                 tool.getWnmpVersions();
@@ -55,6 +55,7 @@ namespace wnmp.pages
                 Dispatcher.Invoke(() =>
                 {
                     LoadList();
+                    Loading.Visibility = Visibility.Hidden;
                 });
                 
             }).Start();

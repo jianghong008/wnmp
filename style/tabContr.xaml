@@ -59,9 +59,6 @@
                                                Value="Top" />
 
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="border"
-                                        Property="Cursor"
-                                        Value="Hand" />
                             <Setter Property="BorderBrush"
                                         Value="#007ACC" />
                         </MultiDataTrigger>

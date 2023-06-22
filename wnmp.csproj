@@ -5,14 +5,17 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
 	<UseWindowsForms>true</UseWindowsForms>
-	<ApplicationIcon>logo.ico</ApplicationIcon>
+	<ApplicationIcon>images\logo.ico</ApplicationIcon>
 	<Description>wnmp环境集成，简单方便。</Description>
 	<Authors>jianghong</Authors>
 	<Company>jianghong</Company>
 	<PackageReleaseNotes>wnmp环境集成，简单方便。</PackageReleaseNotes>
 	<NeutralLanguage>zh-CN</NeutralLanguage>
-	<PackageIcon>logo.png</PackageIcon>
+	<PackageIcon>images\logo.png</PackageIcon>
 	<PackageIconUrl />
+	<PackageProjectUrl>https://gitee.com/jhpw/wnmp</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://gitee.com/jhpw/wnmp</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,11 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="logo.png" />
-    <None Remove="mysql.jpg" />
-    <None Remove="mysql.png" />
-    <None Remove="nginx.png" />
-    <None Remove="php.png" />
+    <None Remove="images\logo.ico" />
+    <None Remove="images\mysql1.png" />
+    <None Remove="images\nginx.png" />
+    <None Remove="images\php.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,10 +38,32 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="logo.png" />
-    <Resource Include="mysql.png" />
-    <Resource Include="nginx.png" />
-    <Resource Include="php.png" />
+    <EmbeddedResource Include="images\logo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Resource Include="images\mysql1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\nginx.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="images\php.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="images\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="images\mysql.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

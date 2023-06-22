@@ -18,17 +18,14 @@ namespace wnmp.tools
         public string MysqlRoot = "";
         public string PHPRoot = "";
 
-        public string[] nginxVersions = { };
-        public string[] mysqlVersions = { };
-        public string[] phpVersions = { };
+        public List<string> nginxVersions = new List<string>();
+        public List<string> mysqlVersions = new List<string>();
+        public List<string> phpVersions = new List<string>();
 
-        private string MyIniTemplate = "[mysql]\r\ndefault-character-set=utf8 \r\n[mysqld]\r\nport=3306\r\nbasedir= \r\ndatadir= \r\ncharacter-set-server=utf8";
         private string MySqlInitCmd = ".\\mysqld.exe --initialize-insecure --user=mysql --explicit_defaults_for_timestamp";
 
         private AppConf appConf;
         public string RootPath = "";
-        [DllImport("User32.dll")]
-        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
         /// <summary>
         /// 初始化运行环境
         /// </summary>
@@ -36,7 +33,7 @@ namespace wnmp.tools
         {
             RootPath = Site.GetRootPath();
             appConf = ac;
-            
+            initDir();
         }
         /// <summary>
         /// 重新加载配置
@@ -62,33 +59,74 @@ namespace wnmp.tools
                 sw.Close();
             }
         }
+        private void initDir()
+        {
+            string appDir = RootPath + "/wnmp/";
+            string phpDir = appDir + "php";
+            string nginxDir = appDir + "nginx";
+            string mysqlDir = appDir + "mysql";
+            try
+            {
+                if (!Directory.Exists(appDir))
+                {
+                    Directory.CreateDirectory(appDir);
+                }
+                if (!Directory.Exists(phpDir))
+                {
+                    Directory.CreateDirectory(phpDir);
+                }
+                if (!Directory.Exists(nginxDir))
+                {
+                    Directory.CreateDirectory(nginxDir);
+                }
+                if (!Directory.Exists(mysqlDir))
+                {
+                    Directory.CreateDirectory(mysqlDir);
+                }
+            }catch
+            {
+                MessageBox.Show("权限不足,初始化软件空间失败");
+            }
+        }
         /// <summary>
         /// 获取当前可用版本
         /// </summary>
         public void getWnmpVersions()
         {
-            phpVersions = new string[] { };
-            nginxVersions = new string[] { };
-            mysqlVersions = new string[] { };
+            nginxVersions.Clear();
+            mysqlVersions.Clear();
+            phpVersions.Clear();
             try
             {
                 //nginx
-                nginxVersions = Directory.GetDirectories(RootPath + "wnmp/nginx");
-                for (int i = 0; i < nginxVersions.Length; i++)
+                string[] nginxs = Directory.GetDirectories(RootPath + "wnmp/nginx");
+                for (int i = 0; i < nginxs.Length; i++)
                 {
-                    nginxVersions[i] = Path.GetFileName(nginxVersions[i]);
+                    if (File.Exists(nginxs[i] + "/nginx.exe"))
+                    {
+                        nginxVersions.Add(Path.GetFileName(nginxs[i]));
+                    }
+                    
                 }
                 //mysql
-                mysqlVersions = Directory.GetDirectories(RootPath + "wnmp/mysql");
-                for (int i = 0; i < mysqlVersions.Length; i++)
+                string[] mysqls = Directory.GetDirectories(RootPath + "wnmp/mysql");
+                for (int i = 0; i < mysqls.Length; i++)
                 {
-                    mysqlVersions[i] = Path.GetFileName(mysqlVersions[i]);
+                    if (File.Exists(mysqls[i]+"/bin/mysqld.exe"))
+                    {
+                        mysqlVersions.Add(Path.GetFileName(mysqls[i]));
+                    }
+                    
                 }
                 //php
-                phpVersions = Directory.GetDirectories(RootPath + "wnmp/php");
-                for (int i = 0; i < phpVersions.Length; i++)
+                string[] phps = Directory.GetDirectories(RootPath + "wnmp/php");
+                for (int i = 0; i < phps.Length; i++)
                 {
-                    phpVersions[i] = Path.GetFileName(phpVersions[i]);
+                    if (File.Exists(phps[i] + "/php.exe"))
+                    {
+                        phpVersions.Add(Path.GetFileName(phps[i]));
+                    }
+                        
                 }
             }
             catch
@@ -144,6 +182,21 @@ namespace wnmp.tools
             {
 
             }
+        }
+        public bool CheckApp(string appName)
+        {
+            if (appName.Equals("php"))
+            {
+                return File.Exists(RootPath + PHPRoot + "/php.exe");
+            }else if (appName.Equals("mysql"))
+            {
+                return File.Exists(RootPath + MysqlRoot + "/bin/mysqld.exe");
+            }
+            else
+            {
+                return File.Exists(RootPath + NginxRoot + "/nginx.exe");
+            }
+
         }
         /// <summary>
         /// 管理nginx
@@ -298,12 +351,6 @@ namespace wnmp.tools
             p.Start();
             //跳转Mysql工作目录，否则启动失败
             p.StandardInput.WriteLine("cd " + MysqlRoot+"bin");
-            //检查mysql是否已经初始化
-            if (!Directory.Exists(Site.GetRootPath() + MysqlRoot+"/data"))
-            {
-                //初始化mysqld
-                p.StandardInput.WriteLine(MySqlInitCmd);
-            }
 
             Process[] pp = Process.GetProcessesByName("mysqld");
             if (pp.Length > 0)
@@ -355,6 +402,7 @@ namespace wnmp.tools
             p.StandardInput.WriteLine("exit");
             //p.WaitForExit();
             p.Close();
+            p.Dispose();
         }
         /// <summary>
         /// 检查Mysql配置并自动修复
@@ -364,10 +412,32 @@ namespace wnmp.tools
             loadPath();
             string ini = Site.GetRootPath() + MysqlRoot;
             string path = ini + "my.ini";
-            
+            if(!Directory.Exists(ini) || appConf.mysqlVersion.Equals(""))
+            {
+                return;
+            }
             try
             {
-                string txt = MyIniTemplate;
+                //检查mysql是否已经初始化
+                if (!Directory.Exists(Site.GetRootPath() + MysqlRoot + "data"))
+                {
+                    //初始化mysqld
+                    ProcessStartInfo info = new ProcessStartInfo();
+                    info.FileName = "cmd.exe";
+                    info.UseShellExecute = false;
+                    info.RedirectStandardInput = true;
+                    info.RedirectStandardOutput = true;
+                    info.CreateNoWindow = true;
+                    Process p = new Process();
+                    p.StandardInput.WriteLine("cd " + MysqlRoot + "bin");
+                    p.StandardInput.WriteLine(MySqlInitCmd);
+                    p.StandardInput.WriteLine("exit");
+                    p.Close();
+                    p.Dispose();
+                    
+                }
+
+                string txt = "";
                 if (File.Exists(path))
                 {
                     //如果存在则检查工作目录
@@ -400,41 +470,55 @@ namespace wnmp.tools
             loadPath();
             string ini = Site.GetRootPath() + PHPRoot;
             string path = ini + "php.ini";
-            if (File.Exists(path))
+            if (!Directory.Exists(ini) || appConf.phpVersion.Equals(""))
             {
-                //如果存在则检查工作目录
-                
-                try
-                {
-                    StreamReader sr = new StreamReader(path);
-                    string txt = sr.ReadToEnd();
-                    sr.Close();
-                    //删除老配置
-                    if (File.Exists(ini + "php.ini"))
-                    {
-                        File.Delete(ini + "php.ini");
-                    }
-                    
-                    ini = ini.Replace(@"\",@"/");
-                    //扩展目录
-                    txt = Regex.Replace(txt, "extension_dir.+", "extension_dir = \"" + ini+"ext\"");
-                    //数据目录
-                    txt = Regex.Replace(txt, "session.save_path=.+", "session.save_path = \"" + ini + "tmp/tmp\"");
-                    //写入
-                    StreamWriter sw = new StreamWriter(ini + "php.ini");
-                    sw.Write(txt);
-                    sw.Flush();
-                    sw.Close();
-                    Console.WriteLine(txt);
-                }
-                catch
-                {
-                    MessageBox.Show("初始化PHP失败！", "错误");
-                }
-
+                return;
             }
-            
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    //如果存在则检查工作目录
+                    if (File.Exists(ini + "php.ini-development"))
+                    {
+                        File.Copy(ini + "php.ini-development", ini + "php.ini");
+                    }
+                    else if (File.Exists(ini + "php.ini-production"))
+                    {
+                        File.Copy(ini + "php.ini-production", ini + "php.ini");
+                    }
+                    else
+                    {
+                        MessageBox.Show("初始化PHP失败,缺少配置文件!", "错误");
+                        return;
+                    }
+                }
 
+                StreamReader sr = new StreamReader(path);
+                string txt = sr.ReadToEnd();
+                sr.Close();
+                //删除老配置
+                if (File.Exists(ini + "php.ini"))
+                {
+                    File.Delete(ini + "php.ini");
+                }
+
+                ini = ini.Replace(@"\", @"/");
+                //扩展目录
+                txt = Regex.Replace(txt, "extension_dir.+", "extension_dir = \"" + ini + "ext\"");
+                //数据目录
+                txt = Regex.Replace(txt, "session.save_path=.+", "session.save_path = \"" + ini + "tmp/tmp\"");
+                //写入
+                StreamWriter sw = new StreamWriter(ini + "php.ini");
+                sw.Write(txt);
+                sw.Flush();
+                sw.Close();
+                Console.WriteLine(txt);
+            }
+            catch
+            {
+                MessageBox.Show("初始化PHP失败！", "错误");
+            }
         }
         
         /// <summary>

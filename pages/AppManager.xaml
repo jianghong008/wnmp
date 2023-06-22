@@ -6,74 +6,77 @@
         xmlns:local="clr-namespace:wnmp.pages"
         mc:Ignorable="d"
         Closing="WinodowClosing"
-        Title="应用管理" Height="450" Width="669" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="应用管理" Height="449" Width="669" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="31*"/>
-            <ColumnDefinition Width="565*"/>
-            <ColumnDefinition Width="67*"/>
-            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="221*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <TabControl Grid.ColumnSpan="4" Margin="0,31,0,0" SelectionChanged="ChangeTabs">
-            <TabItem Header="PHP" Style="{StaticResource TabItemLineStyle}">
-                <Grid Background="#FFE5E5E5">
-                    <Canvas Margin="0,0,0,20">
-                        <ListBox x:Name="PhpListBox" SelectionMode="Single" Height="337" Width="648">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Canvas Height="50">
-                                        <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
-                                        <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
-                                        <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
-                                        <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
-                                        <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
-                                    </Canvas>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Canvas>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Nginx" Style="{StaticResource TabItemLineStyle}">
-                <Grid Background="#FFE5E5E5">
-                    <Canvas Margin="0,0,0,20">
-                        <ListBox x:Name="NginxListBox" SelectionMode="Single" Height="337" Width="648">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Canvas Height="50">
-                                        <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
-                                        <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
-                                        <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
-                                        <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
-                                        <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
-                                    </Canvas>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Canvas>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Mysql" Style="{StaticResource TabItemLineStyle}">
-                <Grid Background="#FFE5E5E5">
-                    <Canvas Margin="0,0,0,20">
-                        <ListBox x:Name="MysqlListBox" SelectionMode="Single" Height="337" Width="648">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Canvas Height="50">
-                                        <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
-                                        <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
-                                        <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
-                                        <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
-                                        <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
-                                    </Canvas>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Canvas>
-                </Grid>
-            </TabItem>
-        </TabControl>
-        <TextBlock HorizontalAlignment="Left" Height="19" Margin="181,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="319" Grid.Column="1" Foreground="#FFD43131"><Run Text="将"/><Run Text="官网下载的"/><Run Text="文件放置"/><Run Text=" "/><Run Language="zh-cn" Text="&quot;"/><Run Text="安装目录"/><Run Text="/"/><Run Text="wnmp"/><Run Text="/"/><Run Text="对应目录"/><Run Language="zh-cn" Text="&quot;"/><Run Text=" 即可"/><Run Text="！"/><LineBreak/><Run/></TextBlock>
-        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="19" Margin="10,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="302"><Run Text="如需要安装其它版本，请移步官网！"/><LineBreak/><Run/></TextBlock>
+        <Canvas Grid.ColumnSpan="2">
+            <TextBlock Height="19" TextWrapping="Wrap" Width="319" Foreground="#FFD43131" HorizontalAlignment="Left" Canvas.Left="203.602" Canvas.Top="10.881" VerticalAlignment="Center"><Run Text="将"/><Run Text="官网下载的"/><Run Text="文件放置"/><Run Text=" "/><Run Language="zh-cn" Text="&quot;"/><Run Text="安装目录"/><Run Text="/"/><Run Text="wnmp"/><Run Text="/"/><Run Text="对应目录"/><Run Language="zh-cn" Text="&quot;"/><Run Text=" 即可"/><Run Text="！"/><LineBreak/><Run/></TextBlock>
+            <TextBlock Height="19" TextWrapping="Wrap" Width="192" HorizontalAlignment="Left" Canvas.Left="11.602" Canvas.Top="10.881" VerticalAlignment="Center"><Run Text="如需要安装其它版本，请移步官网！"/><LineBreak/><Run/></TextBlock>
+            <TabControl SelectionChanged="ChangeTabs" Height="403" Canvas.Top="31" Width="669">
+                <TabItem Header="PHP" Style="{StaticResource TabItemLineStyle}">
+                    <Grid Background="#FFE5E5E5">
+                        <Canvas Height="348" Margin="0,0,0,20">
+                            <ListBox x:Name="PhpListBox" SelectionMode="Single" Height="337" Width="649" HorizontalAlignment="Left" VerticalAlignment="Center" d:ItemsSource="{d:SampleData ItemCount=5}" Canvas.Top="-0.1" Canvas.Left="-0.2">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Canvas Height="50">
+                                            <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
+                                            <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
+                                            <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
+                                            <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
+                                            <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Canvas>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Nginx" Style="{StaticResource TabItemLineStyle}">
+                    <Grid Background="#FFE5E5E5">
+                        <Canvas Margin="0,0,0,20">
+                            <ListBox x:Name="NginxListBox" SelectionMode="Single" Height="337" Width="648" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Canvas Height="50">
+                                            <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
+                                            <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
+                                            <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
+                                            <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
+                                            <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Canvas>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Mysql" Style="{StaticResource TabItemLineStyle}">
+                    <Grid Background="#FFE5E5E5">
+                        <Canvas Margin="0,0,0,20">
+                            <ListBox x:Name="MysqlListBox" SelectionMode="Single" Height="337" Width="648">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Canvas Height="50">
+                                            <ProgressBar Value="{Binding Percent}" Foreground="{Binding PercentColoer}" Visibility="{Binding InstallingAble}" Maximum="100" Canvas.Left="-2" Width="648" Height="5"/>
+                                            <Label Margin="0, 12, 0, 0" Width="350" Content="{Binding Title}" Tag="{Binding Path}"/>
+                                            <Label Content="安装" Width="32" Height="28" Margin="570, 12, 0, 0" IsEnabled="{Binding IsEnabled}" Visibility="{Binding InstallAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="InstallApp"/>
+                                            <Label Content="配置" Width="32" Height="28" Margin="515, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource defautBtnLable}" MouseUp="IniBtn_MouseUp"/>
+                                            <Label Content="移除" Width="32" Height="28" Margin="570, 12, 0, 0" Visibility="{Binding EditAble}" Tag="{Binding Title}" Style="{StaticResource dangerBtnLable}" MouseUp="RmBtn_MouseUp"/>
+                                        </Canvas>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Canvas>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            <Label x:Name="Loading" Content="正在加载 ..." Height="29" Canvas.Left="294" Canvas.Top="179" Width="70" Foreground="#FF1F1E41" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Canvas>
     </Grid>
 </Window>
