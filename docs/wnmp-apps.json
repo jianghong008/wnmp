@@ -1,0 +1,21 @@
+{
+	"version":"1.0.0",
+	"url":"",
+	"php":[
+		"https://file.jhhaha.com/wnmp/php-8.0.29-nts.zip",
+		"https://file.jhhaha.com/wnmp/php7.3.4nts.zip",
+		"https://file.jhhaha.com/wnmp/php-5.6.8-Win32-VC11-x64.zip"
+	],
+	"mysql":[
+		"https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.33-winx64.zip",
+		"https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.40-winx64.zip",
+		"https://downloads.mysql.com/archives/get/p/23/file/mysql-5.6.50-winx64.zip"
+	],
+	"nginx":[
+		"http://nginx.org/download/nginx-1.25.1.zip",
+		"http://nginx.org/download/nginx-1.22.1.zip",
+		"http://nginx.org/download/nginx-1.14.2.zip",
+		"http://nginx.org/download/nginx-1.12.2.zip",
+		"http://nginx.org/download/nginx-1.8.1.zip"
+	]
+}
