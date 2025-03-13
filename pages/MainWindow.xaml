@@ -83,13 +83,17 @@
                         </Canvas>
                     </Grid>
                 </TabItem>
-                <TabItem Style="{StaticResource TabItemLineStyle}" Header="设置">
+                <TabItem Style="{StaticResource TabItemLineStyle}" Header="设置" Height="29" VerticalAlignment="Top">
                     <Grid>
                         <Canvas Margin="3,10,17,20">
                             <GroupBox Header="通用设置" Height="156" Canvas.Left="6.409" Canvas.Top="3.2" Width="595">
                                 <Canvas Margin="0,0,-2,0">
                                     <CheckBox x:Name="quitType" Content="关闭窗口隐藏到托盘" Height="21" Canvas.Left="9.6" Canvas.Top="10.5" Width="128" Click="quitType_Click"/>
                                     <CheckBox x:Name="autoUpdate" Content="自动更新程序" Height="17" Canvas.Left="9.6" Canvas.Top="36.735" Width="128" Click="autoUpdate_Click"/>
+                                    <Label Content="资源地址" Canvas.Left="4" Canvas.Top="59" RenderTransformOrigin="0.597,0.783" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="appsUrl" Canvas.Left="10" Text="TextBox" Canvas.Top="83" Width="255" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="2,2,2,2"/>
+                                    <Button Content="更新" Canvas.Left="270" Canvas.Top="83" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="3,2,3,2" Click="Appurl_Button_Click"/>
+
                                 </Canvas>
                             </GroupBox>
                             <GroupBox Header="WNMP设置" Height="181" Canvas.Left="6.409" Canvas.Top="170.4" Width="595">

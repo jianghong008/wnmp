@@ -1,21 +1,22 @@
 {
 	"version":"1.0.0",
 	"url":"",
-	"php":[
-		"https://file.jhhaha.com/wnmp/php-8.0.29-nts.zip",
-		"https://file.jhhaha.com/wnmp/php7.3.4nts.zip",
-		"https://file.jhhaha.com/wnmp/php-5.6.8-Win32-VC11-x64.zip"
+	"php": [
+		"https://windows.php.net/downloads/releases/php-8.3.19-Win32-vs16-x64.zip",
+		"https://windows.php.net/downloads/releases/php-8.2.28-Win32-vs16-x64.zip",
+		"https://windows.php.net/downloads/releases/php-8.2.28-nts-Win32-vs16-x86.zip",
+		"https://windows.php.net/downloads/releases/php-8.1.32-Win32-vs16-x86.zip"
 	],
-	"mysql":[
-		"https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.33-winx64.zip",
-		"https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.40-winx64.zip",
-		"https://downloads.mysql.com/archives/get/p/23/file/mysql-5.6.50-winx64.zip"
+	"mysql": [
+		"https://downloads.mysql.com/archives/get/p/23/file/mysql-9.1.0-winx64.zip",
+		"http://st1p0dnx2.hn-bkt.clouddn.com/mysql/mysql-8.4.4-winx64.zip",
+		"http://st1p0dnx2.hn-bkt.clouddn.com/mysql/mysql-5.7.40-winx64.zip"
 	],
-	"nginx":[
+	"nginx": [
+		"https://nginx.org/download/nginx-1.26.3.zip",
 		"http://nginx.org/download/nginx-1.25.1.zip",
 		"http://nginx.org/download/nginx-1.22.1.zip",
 		"http://nginx.org/download/nginx-1.14.2.zip",
-		"http://nginx.org/download/nginx-1.12.2.zip",
-		"http://nginx.org/download/nginx-1.8.1.zip"
+		"http://nginx.org/download/nginx-1.12.2.zip"
 	]
 }

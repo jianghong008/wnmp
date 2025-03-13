@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace wnmp.tools
 {
@@ -22,7 +22,7 @@ namespace wnmp.tools
         public List<string> mysqlVersions = new List<string>();
         public List<string> phpVersions = new List<string>();
 
-        private string MySqlInitCmd = ".\\mysqld.exe --initialize-insecure --user=mysql --explicit_defaults_for_timestamp";
+        private string MySqlInitCmd = "mysqld.exe --initialize-insecure --user=mysql";
 
         private AppConf appConf;
         public string RootPath = "";
@@ -104,7 +104,7 @@ namespace wnmp.tools
                 {
                     if (File.Exists(nginxs[i] + "/nginx.exe"))
                     {
-                        nginxVersions.Add(Path.GetFileName(nginxs[i]));
+                        nginxVersions.Add(System.IO.Path.GetFileName(nginxs[i]));
                     }
                     
                 }
@@ -114,7 +114,7 @@ namespace wnmp.tools
                 {
                     if (File.Exists(mysqls[i]+"/bin/mysqld.exe"))
                     {
-                        mysqlVersions.Add(Path.GetFileName(mysqls[i]));
+                        mysqlVersions.Add(System.IO.Path.GetFileName(mysqls[i]));
                     }
                     
                 }
@@ -124,7 +124,7 @@ namespace wnmp.tools
                 {
                     if (File.Exists(phps[i] + "/php.exe"))
                     {
-                        phpVersions.Add(Path.GetFileName(phps[i]));
+                        phpVersions.Add(System.IO.Path.GetFileName(phps[i]));
                     }
                         
                 }
@@ -424,17 +424,24 @@ namespace wnmp.tools
                     //初始化mysqld
                     ProcessStartInfo info = new ProcessStartInfo();
                     info.FileName = "cmd.exe";
-                    info.UseShellExecute = false;
-                    info.RedirectStandardInput = true;
-                    info.RedirectStandardOutput = true;
                     info.CreateNoWindow = true;
-                    Process p = new Process();
-                    p.StandardInput.WriteLine("cd " + MysqlRoot + "bin");
-                    p.StandardInput.WriteLine(MySqlInitCmd);
-                    p.StandardInput.WriteLine("exit");
-                    p.Close();
-                    p.Dispose();
-                    
+                    info.UseShellExecute = false;
+                    info.RedirectStandardOutput = true;
+                    info.RedirectStandardInput = true;
+                    using Process p = new Process
+                    {
+                        StartInfo = info,
+                    };
+
+                    p.Start();
+                    var s = p.StandardInput;
+                    s.WriteLine("cd " + MysqlRoot + "bin");
+                    s.WriteLine(MySqlInitCmd);
+                    s.Close();
+                    string output = p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();
+                    Console.WriteLine(output);
+
                 }
 
                 string txt = "";
@@ -457,8 +464,9 @@ namespace wnmp.tools
                 sw.Close();
                 Console.WriteLine(txt);
             }
-            catch
+            catch(Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 MessageBox.Show("初始化Mysql失败！", "错误");
             }
         }
@@ -520,7 +528,55 @@ namespace wnmp.tools
                 MessageBox.Show("初始化PHP失败！", "错误");
             }
         }
-        
+        /// <summary>
+        /// 检查nginx配置
+        /// </summary>
+        public void CheckNginxINI()
+        {
+            loadPath();
+            string ini = Site.GetRootPath() + NginxRoot;
+            string path = ini + "conf/nginx.conf";
+            if (!Directory.Exists(ini) || appConf.nginxVersion.Equals(""))
+            {
+                return;
+            }
+            try
+            {
+                
+
+                StreamReader sr = new StreamReader(path);
+                string[] txt = sr.ReadToEnd().Split("\n");
+                sr.Close();
+                if (string.Join("\n", txt).Contains("include vhosts/*.conf"))
+                {
+                    return;
+                }
+                string conf = "";
+                foreach (var line in txt)
+                {
+                    if (line.Contains("http {"))
+                    {
+                        conf += line + "\n";
+                        conf += "\t include vhosts/*.conf" + "\n";
+                    }
+                    else
+                    {
+                        conf += line + "\n";
+                    }
+                }
+               
+                //写入
+                StreamWriter sw = new StreamWriter(path);
+                sw.Write(conf);
+                sw.Flush();
+                sw.Close();
+                Console.WriteLine(txt);
+            }
+            catch
+            {
+                MessageBox.Show("初始化Nginx失败！", "错误");
+            }
+        }
         /// <summary>
         /// 检测Mysql是否正在运行
         /// </summary>

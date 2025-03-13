@@ -3,8 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
-using System.Resources;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,9 +13,9 @@ using wnmp.tools;
 namespace wnmp.pages
 {
     /// <summary>
-    /// download.xaml 的交互逻辑
+    /// AppManager.xaml 的交互逻辑
     /// </summary>
-    public partial class download : Window
+    public partial class AppManager : Window
     {
         Tools tool;
         AppConf conf;
@@ -27,7 +25,7 @@ namespace wnmp.pages
         private ObservableCollection<ApplicationModel> NginxVersions = new ObservableCollection<ApplicationModel>();
 
         private int TabsIndex = 0;
-        public download(Tools t, AppConf c, MainWindow mw)
+        public AppManager(Tools t, AppConf c, MainWindow mw)
         {
             InitializeComponent();
             tool = t;
@@ -48,10 +46,10 @@ namespace wnmp.pages
         private void GetRemoteApps()
         {
             Loading.Visibility = Visibility.Visible;
-            new Thread(() =>
+            new Thread(async() =>
             {
                 tool.getWnmpVersions();
-                WebSpider.GetAppsVersions(tool);
+                await WebSpider.GetAppsVersions(tool);
                 Dispatcher.Invoke(() =>
                 {
                     LoadList();
@@ -160,16 +158,17 @@ namespace wnmp.pages
             model.Percent = 0;
             model.Wrong = false;
             // 安装
-            new Thread(() =>
+            new Thread(async () =>
             {
                 try
                 {
-                    WebSpider.DownloadAndExtract(model.Url, tool.RootPath + "/wnmp/"+model.Type, (total, percent) => {
+                    await WebSpider.DownloadAndExtract(model.Url, tool.RootPath + "/wnmp/"+model.Type, (total, percent) => {
                         Dispatcher.Invoke(() =>
                         {
                             model.Percent = percent;
                         });
                     });
+                    
                     Dispatcher.Invoke(() =>
                     {
                         //完成
@@ -177,12 +176,25 @@ namespace wnmp.pages
                         model.InstallAble = Visibility.Hidden;
                         win.ReloadData();
                     });
-                }catch (Exception ex)
+                    if (model.Type == "mysql")
+                    {
+                        tool.CheckMysqlINI();
+                    }else if(model.Type == "nginx")
+                    {
+                        tool.CheckNginxINI();
+                    }
+                    else
+                    {
+                        tool.CheckPhpINI();
+                    }
+                }
+                catch (Exception ex)
                 {
                     model.Wrong = true;
                     model.InstallingAble = Visibility.Hidden;
                     
                     Trace.WriteLine(ex.ToString());
+                    MessageBox.Show(ex.Message,"错误");
                 }
 
             }).Start();

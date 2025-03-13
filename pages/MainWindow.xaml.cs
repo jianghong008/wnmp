@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using wnmp.models;
 using wnmp.pages;
 using wnmp.tools;
@@ -20,7 +18,7 @@ namespace wnmp
     {
         private MainModel model;
         private WebSite ws;
-        private download DownloadPage;
+        private AppManager DownloadPage;
         private PHPExt PHPExt;
         private List<SiteConf> SiteList;
         
@@ -71,11 +69,14 @@ namespace wnmp
                     loadList(false);
                     //加载完成
                     UIisLoaded = true;
-                    //检测Mysql配置
-                    tool.CheckMysqlINI();
-                    //检测php配置
-                    tool.CheckPhpINI();
+                    
                 }));
+                //检测Mysql配置
+                tool.CheckMysqlINI();
+                //检测php配置
+                tool.CheckPhpINI();
+                //检查nginx配置
+                tool.CheckNginxINI();
                 //配置检查
                 if (appConf.checkNewVersion(appConf.appNewVersion))
                 {
@@ -114,6 +115,7 @@ namespace wnmp
             phpVersionLabel.Content = appConf.phpVersion;
             mysqlVersionLabel.Content = appConf.mysqlVersion;
             nginxVersionLabel.Content =  appConf.nginxVersion;
+            appsUrl.Text = appConf.appsUrl;
             if (appConf.autoUpdate=="1")
             {
                 autoUpdate.IsChecked = true;
@@ -1007,6 +1009,7 @@ namespace wnmp
                     initUI(false);
                     loadList(true);
                     Trace.WriteLine(appConf.nginxVersion);
+                    tool.CheckNginxINI();
                 }
                 else
                 {
@@ -1015,7 +1018,11 @@ namespace wnmp
                 
             }
         }
-
+        /// <summary>
+        /// 切换mysql
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void mysqlVersionSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int i = mysqlVersionSelect.SelectedIndex;
@@ -1042,7 +1049,7 @@ namespace wnmp
             //打开软件下载界面
             if (DownloadPage == null)
             {
-                DownloadPage = new download(tool,appConf,this);
+                DownloadPage = new AppManager(tool,appConf,this);
                 DownloadPage.Show();
             }
             else
@@ -1056,7 +1063,7 @@ namespace wnmp
                 catch
                 {
                     DownloadPage = null;
-                    DownloadPage = new download(tool,appConf,this);
+                    DownloadPage = new AppManager(tool,appConf,this);
                     DownloadPage.Show();
                 }
                 
@@ -1087,6 +1094,12 @@ namespace wnmp
                 }
 
             }
+        }
+
+        private void Appurl_Button_Click(object sender, RoutedEventArgs e)
+        {
+            appConf.appsUrl = appsUrl.Text;
+            appConf.Save();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace wnmp.tools
         public string appVersion = "1.0.0";
         public string appNewVersion = "1.0.0";
 
-        public string appsUrl = "";
+        public string appsUrl = "https://jianghong008.github.io/wnmp/wnmp-apps.json";
         /// <summary>
         /// nignx版本
         /// </summary>

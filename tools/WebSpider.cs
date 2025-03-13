@@ -7,11 +7,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using wnmp.models;
@@ -34,14 +36,14 @@ namespace wnmp.tools
 
         public static bool Exit;
 
-        public static void GetAppsVersions(Tools tool)
+        public static async Task GetAppsVersions(Tools tool)
         {
             Exit = false;
             try
             {
                 if (ResourceJson.Equals(""))
                 {
-                    ResourceJson = DownloadToString(AppsUrl);
+                    ResourceJson = await DownloadToString(AppsUrl);
                 }
                 srcResources = JsonConvert.DeserializeObject<AppsResources>(ResourceJson);
                 GetLocalResources();
@@ -120,7 +122,6 @@ namespace wnmp.tools
                     });
                 }
             }
-
         }
         /// <summary>
         /// 转化资源
@@ -170,18 +171,20 @@ namespace wnmp.tools
         /// <param name="url"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public static string DownloadToString(string url,int timeout=10000)
+        public static async Task<string> DownloadToString(string url,int timeout=10000)
         {
-            HttpWebRequest req = HttpWebRequest.CreateHttp(url);
-            req.Method = "Get";
-            req.Timeout = timeout;
-            WebResponse res = req.GetResponse();
-            Stream s = res.GetResponseStream();
+            HttpClient req = new HttpClient()
+            {
+                Timeout = TimeSpan.FromMilliseconds(timeout)
+            };
+
+            using var s = await req.GetStreamAsync(url);
             StreamReader readStream = new StreamReader(s, Encoding.UTF8);
 
             string txt = readStream.ReadToEnd();
             readStream.Close();
             s.Close();
+
             return txt;
         }
         /// <summary>
@@ -189,22 +192,24 @@ namespace wnmp.tools
         /// </summary>
         /// <param name="url"></param>
         /// <param name="savePath"></param>
-        public static void DownloadAndExtract(string url,string savePath,Action<long,float> action)
+        public static async Task DownloadAndExtract(string url,string savePath,Action<long,float> action)
         {
-            HttpWebRequest req = HttpWebRequest.CreateHttp(url);
-            req.Method = "Get";
-            //req.Timeout = timeout;
+            HttpClient httpClient = new HttpClient();
             MD5 md5 = MD5.Create();
             Regex regex = new Regex(@"[^\w\d]");
             
             string temp = Convert.ToBase64String(md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(url))).ToLower();
             temp = regex.Replace(temp,"");
-
-            WebResponse res = req.GetResponse();
-            Stream s = res.GetResponseStream();
+            var  res = await httpClient.GetAsync(url);
+            if(res.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("资源请求失败");
+            }
+            Stream s = res.Content.ReadAsStream();
             byte[] buffer = new byte[1024];
             int size = s.Read(buffer,0,buffer.Length);
-            long totalSize = res.ContentLength, downloadSzie = 0;
+            long totalSize = (long)res.Content.Headers.ContentLength;
+            long downloadSzie = 0;
             // 先缓存本地
             if (!Directory.Exists(savePath))
             {
@@ -221,7 +226,6 @@ namespace wnmp.tools
                     sw.Flush();
                     sw.Close();
                     s.Close();
-                    res.Close();
                     res.Dispose();
                     File.Delete(tempPath);
                     return;
@@ -241,7 +245,6 @@ namespace wnmp.tools
             sw.Flush();
             sw.Close();
             s.Close();
-            res.Close();
             res.Dispose();
 
             if (ZipFile.IsZipFile(tempPath))
