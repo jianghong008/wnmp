@@ -239,9 +239,9 @@ namespace wnmp.pages
                 return;
             }
             string path = tool.RootPath + model.Path;
-            if (path.IndexOf(conf.phpVersion) >= 0 || path.IndexOf(conf.mysqlVersion) >= 0 || path.IndexOf(conf.nginxVersion) >= 0)
+            if ((path.Contains(conf.phpVersion)|| path.Contains(conf.mysqlVersion)|| path.Contains(conf.nginxVersion)) && !conf.phpVersion.Equals(""))
             {
-                _ = MessageBox.Show("该版本正在使用，不可移除！", "提示");
+                MessageBox.Show("该版本正在使用，不可移除！", "提示");
                 return;
             }
             
