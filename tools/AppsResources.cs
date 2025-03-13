@@ -25,6 +25,8 @@ namespace wnmp.tools
     /// </summary>
     internal class AppsResources
     {
+        public string version = "1.0.0";
+        public string url = "";
         public string[] php = new string[] { };
         public string[] mysql = new string[] { };
         public string[] nginx = new string[] { };

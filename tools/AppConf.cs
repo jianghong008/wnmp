@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -167,22 +169,18 @@ namespace wnmp.tools
         /// 检查版本
         /// </summary>
         /// <returns>是否需要更新</returns>
-        public bool checkNewVersion(string v)
+        public async Task<bool> checkNewVersion(string v)
         {
             if (autoUpdate == "0" || appsUrl.Equals(""))
             {
                 return false;
             }
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(appsUrl);
-            req.Method = "GET";
+            HttpClient client = new HttpClient();
             try
             {
-                using HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+                string txt = await client.GetStringAsync(appsUrl);
                 Load();
-                StreamReader sr = new StreamReader(res.GetResponseStream());
-                string jsonText = sr.ReadToEnd();
-                sr.Close();
-                LocalAppsResources jo = JsonConvert.DeserializeObject<LocalAppsResources>(jsonText);
+                AppsResources jo = JsonConvert.DeserializeObject<AppsResources>(txt);
                 string version = jo.version.ToString();
                 bool yes = Version.Parse(version) > Version.Parse(appVersion);
                 if (yes)
@@ -190,12 +188,15 @@ namespace wnmp.tools
                     return true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //MessageBox.Show("检查更新失败", "错误");
+                {
+                    Console.WriteLine(ex.Message);
+                    MessageBox.Show("检查更新失败", "错误");
+                }
+
             }
             return false;
-
         }
     }
 }

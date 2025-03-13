@@ -61,7 +61,7 @@ namespace wnmp
             model = new MainModel();
             DataContext = model;
             //异步加载
-            new Thread(() => {
+            new Thread(async() => {
                 Dispatcher.Invoke(new Action(() => {
                     //设置UI
                     initUI();
@@ -78,7 +78,7 @@ namespace wnmp
                 //检查nginx配置
                 tool.CheckNginxINI();
                 //配置检查
-                if (appConf.checkNewVersion(appConf.appNewVersion))
+                if (await appConf.checkNewVersion(appConf.appNewVersion))
                 {
                     Dispatcher.Invoke(new Action(() => {
                         MessageBoxResult mbr = MessageBox.Show("有新版本可用，是否立即更新？", "更新提示", MessageBoxButton.YesNo, MessageBoxImage.Question);
